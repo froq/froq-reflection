@@ -132,7 +132,7 @@ class ReflectionType extends \ReflectionType implements \Reflector
     }
 
     /**
-     * Builtin state checker.
+     * Check whether type is builtin.
      *
      * @return bool
      */
@@ -143,7 +143,7 @@ class ReflectionType extends \ReflectionType implements \Reflector
     }
 
     /**
-     * Named-type state checker.
+     * Check whether type is named-type.
      *
      * @return bool
      */
@@ -153,7 +153,7 @@ class ReflectionType extends \ReflectionType implements \Reflector
     }
 
     /**
-     * Union-type state checker.
+     * Check whether type is union-type.
      *
      * @return bool
      */
@@ -163,7 +163,7 @@ class ReflectionType extends \ReflectionType implements \Reflector
     }
 
     /**
-     * Intersection-type state checker.
+     * Check whether type is intersection-type.
      *
      * @return bool
      */
@@ -173,7 +173,7 @@ class ReflectionType extends \ReflectionType implements \Reflector
     }
 
     /**
-     * Nullable state checker.
+     * Check whether type is nullable.
      *
      * @return bool
      */
