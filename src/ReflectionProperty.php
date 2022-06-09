@@ -218,7 +218,7 @@ class ReflectionProperty extends \ReflectionProperty
      */
     public function getVisibility(): string
     {
-        return $this->isPublic() ? 'public' : ($this->isPrivate() ? 'private' : 'protected');
+        return Reflection::getVisibility($this);
     }
 
     /**
@@ -228,7 +228,7 @@ class ReflectionProperty extends \ReflectionProperty
      */
     public function getModifierNames(): array
     {
-        return \Reflection::getModifierNames($this->getModifiers());
+        return Reflection::getModifierNames($this->getModifiers());
     }
 
     /**
