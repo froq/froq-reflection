@@ -24,7 +24,7 @@ class ReflectionParameter extends \ReflectionParameter
      */
     public function hasDefaultValue(): bool
     {
-        return $this->isOptional();
+        return $this->isOptional() && !$this->isVariadic();
     }
 
     /**
@@ -34,19 +34,19 @@ class ReflectionParameter extends \ReflectionParameter
      */
     public function getDefaultValue(): mixed
     {
-        return $this->isOptional() ? parent::getDefaultValue() : null;
+        return $this->hasDefaultValue() ? parent::getDefaultValue() : null;
     }
 
     /** @override */
     public function isDefaultValueConstant(): bool
     {
-        return $this->isOptional() ? parent::isDefaultValueConstant() : false;
+        return $this->hasDefaultValue() ? parent::isDefaultValueConstant() : false;
     }
 
     /** @override */
     public function getDefaultValueConstantName(): string|null
     {
-        return $this->isOptional() ? parent::getDefaultValueConstantName() : null;
+        return $this->hasDefaultValue() ? parent::getDefaultValueConstantName() : null;
     }
 
     /** @override */
