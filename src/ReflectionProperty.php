@@ -21,7 +21,7 @@ use Set;
 class ReflectionProperty extends \ReflectionProperty
 {
     /** Property reference */
-    private object $reference;
+    public object $reference;
 
     /**
      * Constructor.

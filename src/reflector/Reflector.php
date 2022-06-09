@@ -14,6 +14,7 @@ namespace froq\reflection\reflector;
  * @object  froq\reflection\reflector\Reflector
  * @author  Kerem Güneş
  * @since   6.0
+ * @internal
  */
 abstract class Reflector
 {

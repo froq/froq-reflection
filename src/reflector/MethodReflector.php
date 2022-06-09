@@ -16,6 +16,7 @@ use froq\reflection\ReflectionMethod;
  * @object  froq\reflection\reflector\MethodReflector
  * @author  Kerem Güneş
  * @since   6.0
+ * @internal
  */
 class MethodReflector extends Reflector
 {

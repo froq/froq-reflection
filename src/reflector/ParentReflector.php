@@ -17,6 +17,7 @@ use froq\util\Objects;
  * @object  froq\reflection\reflector\ParentReflector
  * @author  Kerem Güneş
  * @since   6.0
+ * @internal
  */
 class ParentReflector extends Reflector
 {

@@ -26,7 +26,7 @@ use Set;
 trait ClassTrait
 {
     /** Class/object reference. */
-    private string|object $reference;
+    public string|object $reference;
 
     /** @magic */
     public function __debugInfo(): array
@@ -279,25 +279,25 @@ trait ClassTrait
      */
     public function properties(): Set
     {
-        return (new PropertyReflector($this, $this->reference))->properties();
+        return (new PropertyReflector($this))->properties();
     }
 
     /** @override */
     public function hasProperty(string $name): bool
     {
-        return (new PropertyReflector($this, $this->reference))->hasProperty($name);
+        return (new PropertyReflector($this))->hasProperty($name);
     }
 
     /** @override */ #[\ReturnTypeWillChange]
     public function getProperty(string $name): ReflectionProperty|null
     {
-        return (new PropertyReflector($this, $this->reference))->getProperty($name);
+        return (new PropertyReflector($this))->getProperty($name);
     }
 
     /** @override */
     public function getProperties(int $filter = null): array
     {
-        return (new PropertyReflector($this, $this->reference))->getProperties($filter);
+        return (new PropertyReflector($this))->getProperties($filter);
     }
 
     /**
@@ -308,7 +308,7 @@ trait ClassTrait
      */
     public function getPropertyNames(int $filter = null): array
     {
-        return (new PropertyReflector($this, $this->reference))->getPropertyNames($filter);
+        return (new PropertyReflector($this))->getPropertyNames($filter);
     }
 
     /**
@@ -320,6 +320,6 @@ trait ClassTrait
      */
     public function getPropertyValues(int $filter = null, bool $assoc = false): array
     {
-        return (new PropertyReflector($this, $this->reference))->getPropertyValues($filter, $assoc);
+        return (new PropertyReflector($this))->getPropertyValues($filter, $assoc);
     }
 }

@@ -16,30 +16,10 @@ use froq\reflection\ReflectionProperty;
  * @object  froq\reflection\reflector\PropertyReflector
  * @author  Kerem Güneş
  * @since   6.0
+ * @internal
  */
 class PropertyReflector extends Reflector
 {
-    /**
-     * Reference to reflected class & object, required for dynamic properties.
-     *
-     * @var string|object
-     */
-    private string|object $reference;
-
-    /** @override */
-    public function __construct(\Reflector $reflector, string|object $reference = null)
-    {
-        // For extended reflections.
-        if (!$reference) {
-            $reference = (new \ReflectionClass($reflector))
-                ->getProperty('reference')?->getValue($reflector);
-        }
-
-        $this->reference = $reference ?? $reflector->name;
-
-        parent::__construct($reflector);
-    }
-
     /**
      * Set of properties.
      *
@@ -48,7 +28,9 @@ class PropertyReflector extends Reflector
     public function properties(): \Set
     {
         return (new \Set($this->collect()))
-            ->map(fn($name) => new ReflectionProperty($this->reference, $name));
+            ->map(fn($name) => new ReflectionProperty(
+                $this->reflector->reference, $name
+            ));
     }
 
     /**
@@ -61,7 +43,7 @@ class PropertyReflector extends Reflector
         try {
             // Dynamics allowed by ReflectionProperty if reference is object,
             // but ReflectionClass.hasProperty() return false for them.
-            new \ReflectionProperty($this->reference, $name);
+            new \ReflectionProperty($this->reflector->reference, $name);
             return true;
         } catch (\Throwable) {
             return false;
@@ -79,7 +61,7 @@ class PropertyReflector extends Reflector
         try {
             // Dynamics allowed by ReflectionProperty if reference is object,
             // but ReflectionClass.getProperty() throws exception for them.
-            return new ReflectionProperty($this->reference, $name);
+            return new ReflectionProperty($this->reflector->reference, $name);
         } catch (\Throwable $e) {
             return null;
         };
@@ -94,7 +76,7 @@ class PropertyReflector extends Reflector
     public function getProperties(int $filter = null): array
     {
         return array_map(
-            fn($name) => new ReflectionProperty($this->reference, $name),
+            fn($name) => new ReflectionProperty($this->reflector->reference, $name),
             $this->collect($filter),
         );
     }
@@ -120,7 +102,7 @@ class PropertyReflector extends Reflector
     public function getPropertyValues(int $filter = null, bool $assoc = false): array
     {
         $values = array_map(
-            fn($name) => (new ReflectionProperty($this->reference, $name))->getValue(),
+            fn($name) => (new ReflectionProperty($this->reflector->reference, $name))->getValue(),
             $names = $this->collect($filter)
         );
 
@@ -133,7 +115,7 @@ class PropertyReflector extends Reflector
     private function collect(int $filter = null): array
     {
         $ret = [];
-        $ref = new \ReflectionClass($this->reference);
+        $ref = new \ReflectionClass($this->reflector->reference);
 
         foreach ($ref->getProperties($filter) as $property) {
             $ret[$property->name] = $property->name;
@@ -145,8 +127,8 @@ class PropertyReflector extends Reflector
         }
 
         // Dynamic properties.
-        if (is_object($this->reference)) {
-            foreach (array_keys(get_object_vars($this->reference)) as $var) {
+        if (is_object($this->reflector->reference)) {
+            foreach (array_keys(get_object_vars($this->reflector->reference)) as $var) {
                 $ret[$var] ??= $var;
             }
         }

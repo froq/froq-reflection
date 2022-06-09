@@ -14,6 +14,7 @@ namespace froq\reflection\reflector;
  * @object  froq\reflection\reflector\AttributeReflector
  * @author  Kerem Güneş
  * @since   6.0
+ * @internal
  */
 class AttributeReflector extends Reflector
 {

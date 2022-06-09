@@ -17,6 +17,7 @@ use froq\util\Objects;
  * @object  froq\reflection\reflector\InterfaceReflector
  * @author  Kerem Güneş
  * @since   6.0
+ * @internal
  */
 class InterfaceReflector extends Reflector
 {

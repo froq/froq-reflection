@@ -17,6 +17,7 @@ use froq\util\Objects;
  * @object  froq\reflection\reflector\TraitReflector
  * @author  Kerem Güneş
  * @since   6.0
+ * @internal
  */
 class TraitReflector extends Reflector
 {

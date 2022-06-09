@@ -19,7 +19,7 @@ namespace froq\reflection;
 class ReflectionType extends \ReflectionType implements \Reflector
 {
     /** Name/nullable reference. */
-    private object $reference;
+    public object $reference;
 
     /** Typing delimiter. */
     private string $delimiter;
