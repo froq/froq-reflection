@@ -9,8 +9,8 @@ namespace froq\reflection\trait;
 
 use froq\reflection\{ReflectionClass, ReflectionMethod, ReflectionProperty,
     ReflectionAttribute, ReflectionInterface, ReflectionTrait};
-use froq\reflection\reflector\{ParentReflector, MethodReflector, PropertyReflector,
-    AttributeReflector, InterfaceReflector, TraitReflector};
+use froq\reflection\reflector\{AttributeReflector, InterfaceReflector, TraitReflector,
+    ParentReflector, MethodReflector, PropertyReflector};
 use froq\util\Objects;
 use Set;
 
@@ -138,6 +138,48 @@ trait ClassTrait
     }
 
     /**
+     * Set of attributes.
+     *
+     * @return Set<ReflectionAttribute>
+     */
+    public function attributes(): Set
+    {
+        return (new AttributeReflector($this))->attributes();
+    }
+
+    /**
+     * Has attribute.
+     *
+     * @param  string $name
+     * @return bool
+     */
+    public function hasAttribute(string $name): bool
+    {
+        return (new AttributeReflector($this))->hasAttribute($name);
+    }
+
+    /**
+     * Get attribute.
+     *
+     * @param  string $name
+     * @return ReflectionAttribute|null
+     */
+    public function getAttribute(string $name): \ReflectionAttribute|null
+    {
+        return (new AttributeReflector($this))->getAttribute($name);
+    }
+
+    /**
+     * Get attribute names.
+     *
+     * @return array<string>
+     */
+    public function getAttributeNames(): array
+    {
+        return (new AttributeReflector($this))->getAttributeNames();
+    }
+
+    /**
      * Set of interfaces.
      *
      * @return Set<froq\reflection\ReflectionInterface>
@@ -224,48 +266,6 @@ trait ClassTrait
     }
 
     /**
-     * Set of attributes.
-     *
-     * @return Set<ReflectionAttribute>
-     */
-    public function attributes(): Set
-    {
-        return (new AttributeReflector($this))->attributes();
-    }
-
-    /**
-     * Has attribute.
-     *
-     * @param  string $name
-     * @return bool
-     */
-    public function hasAttribute(string $name): bool
-    {
-        return (new AttributeReflector($this))->hasAttribute($name);
-    }
-
-    /**
-     * Get attribute.
-     *
-     * @param  string $name
-     * @return ReflectionAttribute|null
-     */
-    public function getAttribute(string $name): \ReflectionAttribute|null
-    {
-        return (new AttributeReflector($this))->getAttribute($name);
-    }
-
-    /**
-     * Get attribute names.
-     *
-     * @return array<string>
-     */
-    public function getAttributeNames(): array
-    {
-        return (new AttributeReflector($this))->getAttributeNames();
-    }
-
-    /**
      * Set of methods.
      *
      * @return Set<froq\reflection\ReflectionMethod>
@@ -322,7 +322,7 @@ trait ClassTrait
     }
 
     /**
-     * Check property.
+     * Has property.
      *
      * @param  string $name
      * @return bool

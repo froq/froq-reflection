@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 namespace froq\reflection;
 
-use froq\reflection\reflector\{TraitReflector, AttributeReflector};
+use froq\reflection\reflector\{AttributeReflector, TraitReflector};
 use Set;
 
 /**
@@ -64,6 +64,48 @@ class ReflectionProperty extends \ReflectionProperty
     }
 
     /**
+     * Set of attributes.
+     *
+     * @return Set<ReflectionAttribute>
+     */
+    public function attributes(): Set
+    {
+        return (new AttributeReflector($this))->attributes();
+    }
+
+    /**
+     * Has attribute.
+     *
+     * @param  string $name
+     * @return bool
+     */
+    public function hasAttribute(string $name): bool
+    {
+        return (new AttributeReflector($this))->hasAttribute($name);
+    }
+
+    /**
+     * Get attribute.
+     *
+     * @param  string $name
+     * @return ReflectionAttribute|null
+     */
+    public function getAttribute(string $name): \ReflectionAttribute|null
+    {
+        return (new AttributeReflector($this))->getAttribute($name);
+    }
+
+    /**
+     * Get attribute names.
+     *
+     * @return array
+     */
+    public function getAttributeNames(): array
+    {
+        return (new AttributeReflector($this))->getAttributeNames();
+    }
+
+    /**
      * Set of traits.
      *
      * @return Set<froq\reflection\ReflectionTrait>
@@ -112,48 +154,6 @@ class ReflectionProperty extends \ReflectionProperty
     public function getTraitNames(): array
     {
         return (new TraitReflector($this))->getTraitNames();
-    }
-
-    /**
-     * Set of attributes.
-     *
-     * @return Set<ReflectionAttribute>
-     */
-    public function attributes(): Set
-    {
-        return (new AttributeReflector($this))->attributes();
-    }
-
-    /**
-     * Has attribute.
-     *
-     * @param  string $name
-     * @return bool
-     */
-    public function hasAttribute(string $name): bool
-    {
-        return (new AttributeReflector($this))->hasAttribute($name);
-    }
-
-    /**
-     * Get attribute.
-     *
-     * @param  string $name
-     * @return ReflectionAttribute|null
-     */
-    public function getAttribute(string $name): \ReflectionAttribute|null
-    {
-        return (new AttributeReflector($this))->getAttribute($name);
-    }
-
-    /**
-     * Get attribute names.
-     *
-     * @return array
-     */
-    public function getAttributeNames(): array
-    {
-        return (new AttributeReflector($this))->getAttributeNames();
     }
 
     /** @override */
