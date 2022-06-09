@@ -39,8 +39,7 @@ class ReflectionProperty extends \ReflectionProperty
     /** @magic */
     public function __debugInfo(): array
     {
-        return ['name' => $this->name, 'class' => $this->class,
-                'type' => $this->getType()?->getName(), 'static' => $this->isStatic()];
+        return ['name' => $this->name, 'class' => $this->class];
     }
 
     /**

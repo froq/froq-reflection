@@ -28,9 +28,7 @@ class PropertyReflector extends Reflector
     public function properties(): \Set
     {
         return (new \Set($this->collect()))
-            ->map(fn($name) => new ReflectionProperty(
-                $this->reflector->reference, $name
-            ));
+            ->map(fn($name) => $this->convert($name));
     }
 
     /**
@@ -43,7 +41,7 @@ class PropertyReflector extends Reflector
         try {
             // Dynamics allowed by ReflectionProperty if reference is object,
             // but ReflectionClass.hasProperty() return false for them.
-            new \ReflectionProperty($this->reflector->reference, $name);
+            $this->convert($name);
             return true;
         } catch (\Throwable) {
             return false;
@@ -61,7 +59,7 @@ class PropertyReflector extends Reflector
         try {
             // Dynamics allowed by ReflectionProperty if reference is object,
             // but ReflectionClass.getProperty() throws exception for them.
-            return new ReflectionProperty($this->reflector->reference, $name);
+            return $this->convert($name);
         } catch (\Throwable $e) {
             return null;
         };
@@ -75,10 +73,7 @@ class PropertyReflector extends Reflector
      */
     public function getProperties(int $filter = null): array
     {
-        return array_map(
-            fn($name) => new ReflectionProperty($this->reflector->reference, $name),
-            $this->collect($filter),
-        );
+        return array_map([$this, 'convert'], $this->collect($filter));
     }
 
     /**
@@ -102,7 +97,7 @@ class PropertyReflector extends Reflector
     public function getPropertyValues(int $filter = null, bool $assoc = false): array
     {
         $values = array_map(
-            fn($name) => (new ReflectionProperty($this->reflector->reference, $name))->getValue(),
+            fn($name) => $this->convert($name)->getValue(),
             $names = $this->collect($filter)
         );
 
@@ -134,5 +129,13 @@ class PropertyReflector extends Reflector
         }
 
         return array_values($ret);
+    }
+
+    /**
+     * Convert properties to instances.
+     */
+    private function convert(string $name): ReflectionProperty
+    {
+        return new ReflectionProperty($this->reflector->reference, $name);
     }
 }
