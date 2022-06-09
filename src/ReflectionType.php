@@ -8,8 +8,8 @@ declare(strict_types=1);
 namespace froq\reflection;
 
 /**
- * An extended `ReflectionType` class, combines `ReflectionNamedType`,
- * `ReflectionUnionType` and `ReflectionIntersectionType` as one.
+ * An reflection class, combines `ReflectionNamedType`, `ReflectionUnionType`
+ * and `ReflectionIntersectionType` as one and adds some other utility methods.
  *
  * @package froq\reflection
  * @object  froq\reflection\ReflectionType
