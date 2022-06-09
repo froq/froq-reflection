@@ -84,8 +84,7 @@ class InterfaceReflector extends Reflector
         if ($this->reflector instanceof \ReflectionClass ||
             $this->reflector instanceof \ReflectionObject) {
             $ret = Objects::getInterfaces($this->reflector->name);
-        }
-        elseif ($this->reflector instanceof \ReflectionMethod) {
+        } elseif ($this->reflector instanceof \ReflectionMethod) {
             $ret = array_filter(
                 $this->reflector->getDeclaringClass()->getInterfaces(),
                 fn($ref) => (
