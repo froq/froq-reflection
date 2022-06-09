@@ -28,7 +28,7 @@ class AttributeReflector extends Reflector
     }
 
     /**
-     * Check whether an attribute exists by given name.
+     * Check attribute existence.
      *
      * @param  string $name
      * @return bool
@@ -44,7 +44,7 @@ class AttributeReflector extends Reflector
     }
 
     /**
-     * Get an attribute by given name or return null if absent.
+     * Get attribute.
      *
      * @param  string $name
      * @return ReflectionAttribute|null
@@ -60,7 +60,7 @@ class AttributeReflector extends Reflector
     }
 
     /**
-     * Get all attribute names.
+     * Get attribute names.
      *
      * @return array<string>
      */

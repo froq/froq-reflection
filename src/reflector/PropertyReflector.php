@@ -52,7 +52,7 @@ class PropertyReflector extends Reflector
     }
 
     /**
-     * Check property.
+     * Check property existence.
      *
      * @return bool
      */
