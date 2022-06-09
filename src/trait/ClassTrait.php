@@ -9,8 +9,8 @@ namespace froq\reflection\trait;
 
 use froq\reflection\{ReflectionClass, ReflectionMethod, ReflectionProperty,
     ReflectionAttribute, ReflectionInterface, ReflectionTrait};
-use froq\reflection\reflector\{ParentReflector, InterfaceReflector, TraitReflector,
-    AttributeReflector, MethodReflector, PropertyReflector};
+use froq\reflection\reflector\{ParentReflector, MethodReflector, PropertyReflector,
+    AttributeReflector, InterfaceReflector, TraitReflector};
 use froq\util\Objects;
 use Set;
 
@@ -117,7 +117,13 @@ trait ClassTrait
         return (new ParentReflector($this))->getParentNames();
     }
 
-    /** @override */ #[\ReturnTypeWillChange]
+    /**
+     * Get parent class.
+     *
+     * @return froq\reflection\ReflectionClass
+     * @override
+     */
+    #[\ReturnTypeWillChange]
     public function getParentClass(): ReflectionClass|null
     {
         return $this->getParent();
@@ -152,13 +158,23 @@ trait ClassTrait
         return (new InterfaceReflector($this))->getInterface($name);
     }
 
-    /** @override */
+    /**
+     * Get interfaces.
+     *
+     * @return array<froq\reflection\ReflectionInterface>
+     * @override
+     */
     public function getInterfaces(): array
     {
         return (new InterfaceReflector($this))->getInterfaces();
     }
 
-    /** @override */
+    /**
+     * Get interface names.
+     *
+     * @return array<string>
+     * @override
+     */
     public function getInterfaceNames(): array
     {
         return (new InterfaceReflector($this))->getInterfaceNames();
@@ -185,13 +201,23 @@ trait ClassTrait
         return (new TraitReflector($this))->getTrait($name);
     }
 
-    /** @override */
+    /**
+     * Get traits.
+     *
+     * @return array<froq\reflection\ReflectionTrait>
+     * @override
+     */
     public function getTraits(): array
     {
         return (new TraitReflector($this))->getTraits();
     }
 
-    /** @override */
+    /**
+     * Get trait names.
+     *
+     * @return array<string>
+     * @override
+     */
     public function getTraitNames(): array
     {
         return (new TraitReflector($this))->getTraitNames();
@@ -249,13 +275,26 @@ trait ClassTrait
         return (new MethodReflector($this))->methods();
     }
 
-    /** @override */ #[\ReturnTypeWillChange]
+    /**
+     * Get method.
+     *
+     * @param  string $name
+     * @return froq\reflection\ReflectionMethod
+     * @override
+     */
+    #[\ReturnTypeWillChange]
     public function getMethod(string $name): ReflectionMethod|null
     {
         return (new MethodReflector($this))->getMethod($name);
     }
 
-    /** @override */
+    /**
+     * Get methods.
+     *
+     * @param  int|null $filter
+     * @return array<froq\reflection\ReflectionMethod>
+     * @override
+     */
     public function getMethods(int $filter = null): array
     {
         return (new MethodReflector($this))->getMethods($filter);
@@ -282,19 +321,38 @@ trait ClassTrait
         return (new PropertyReflector($this))->properties();
     }
 
-    /** @override */
+    /**
+     * Check property.
+     *
+     * @param  string $name
+     * @return bool
+     * @override
+     */
     public function hasProperty(string $name): bool
     {
         return (new PropertyReflector($this))->hasProperty($name);
     }
 
-    /** @override */ #[\ReturnTypeWillChange]
+    /**
+     * Get property.
+     *
+     * @param  string $name
+     * @return froq\reflection\ReflectionProperty
+     * @override
+     */
+    #[\ReturnTypeWillChange]
     public function getProperty(string $name): ReflectionProperty|null
     {
         return (new PropertyReflector($this))->getProperty($name);
     }
 
-    /** @override */
+    /**
+     * Get property.
+     *
+     * @param  int $filter
+     * @return array<froq\reflection\ReflectionProperty>
+     * @override
+     */
     public function getProperties(int $filter = null): array
     {
         return (new PropertyReflector($this))->getProperties($filter);

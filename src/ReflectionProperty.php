@@ -52,7 +52,12 @@ class ReflectionProperty extends \ReflectionProperty
         return $this->class;
     }
 
-    /** @override */
+    /**
+     * Get declaring class.
+     *
+     * @return froq\reflection\ReflectionClass
+     * @override
+     */
     public function getDeclaringClass(): ReflectionClass
     {
         return new ReflectionClass(parent::getDeclaringClass()->name);
@@ -69,16 +74,6 @@ class ReflectionProperty extends \ReflectionProperty
     }
 
     /**
-     * Get traits.
-     *
-     * @return array<froq\reflection\ReflectionTrait>
-     */
-    public function getTraits(): array
-    {
-        return (new TraitReflector($this))->getTraits();
-    }
-
-    /**
      * Get trait.
      *
      * @param  string|null $name
@@ -87,6 +82,16 @@ class ReflectionProperty extends \ReflectionProperty
     public function getTrait(string $name = null): ReflectionTrait|null
     {
         return (new TraitReflector($this))->getTrait($name);
+    }
+
+    /**
+     * Get traits.
+     *
+     * @return array<froq\reflection\ReflectionTrait>
+     */
+    public function getTraits(): array
+    {
+        return (new TraitReflector($this))->getTraits();
     }
 
     /**
