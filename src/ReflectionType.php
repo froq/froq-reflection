@@ -202,7 +202,7 @@ class ReflectionType extends \ReflectionType implements \Reflector
     }
 
     /**
-     * Static initializer for string & core ReflectionType inputs.
+     * Static initializer for ReflectionType types.
      *
      * @param  ReflectionType $type
      * @return froq\reflection\ReflectionType
