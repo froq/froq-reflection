@@ -201,11 +201,7 @@ class ReflectionProperty extends \ReflectionProperty
     public function getType(): ReflectionType|null
     {
         if ($type = parent::getType()) {
-            return new ReflectionType(
-                ($type instanceof \ReflectionNamedType)
-                    ? $type->getName() : (string) $type,
-                $type->allowsNull()
-            );
+            return ReflectionType::from($type);
         }
         return null;
     }

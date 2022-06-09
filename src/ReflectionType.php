@@ -200,4 +200,19 @@ class ReflectionType extends \ReflectionType implements \Reflector
     {
         return in_array($name, $this->getNames(), true);
     }
+
+    /**
+     * Static initializer for string & core ReflectionType inputs.
+     *
+     * @param  ReflectionType $type
+     * @return froq\reflection\ReflectionType
+     */
+    public static function from(\ReflectionType $type): ReflectionType
+    {
+        return new ReflectionType(
+            ($type instanceof \ReflectionNamedType)
+                ? $type->getName() : (string) $type,
+            $type->allowsNull()
+        );
+    }
 }
