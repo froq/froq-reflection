@@ -190,7 +190,7 @@ class ReflectionProperty extends \ReflectionProperty
 
         if (!is_object($object)) {
             throw new \ReflectionException(sprintf(
-                'Cannot set property $%s of non-instantiated class %s',
+                'Cannot get property $%s of non-instantiated class %s',
                 $this->reference->name, get_class_name($this->reference->class)
             ));
         }
