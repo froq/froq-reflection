@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace froq\reflection;
 
 /**
- * An extended `Reflection` utility class.
+ * Reflection utility class.
  *
  * @package froq\reflection\Reflection
  * @object  froq\reflection\Reflection
