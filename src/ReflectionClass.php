@@ -22,12 +22,12 @@ class ReflectionClass extends \ReflectionClass
     /**
      * Constructor.
      *
-     * @param string|object $class
+     * @param string|object $target
      */
-    public function __construct(string|object $class)
+    public function __construct(string|object $target)
     {
-        $this->reference = $class;
+        $this->reference = $target;
 
-        parent::__construct($class);
+        parent::__construct($target);
     }
 }
