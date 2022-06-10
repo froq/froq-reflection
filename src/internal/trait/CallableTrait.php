@@ -26,7 +26,7 @@ use Set;
  */
 trait CallableTrait
 {
-    /** Method/function */
+    /** Method/function reference. */
     public object $reference;
 
     /**
