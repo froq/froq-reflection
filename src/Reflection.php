@@ -10,7 +10,7 @@ namespace froq\reflection;
 /**
  * Reflection utility class.
  *
- * @package froq\reflection\Reflection
+ * @package froq\reflection
  * @object  froq\reflection\Reflection
  * @author  Kerem Güneş
  * @since   6.0
