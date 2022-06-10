@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace froq\reflection\internal\trait;
 
 use froq\reflection\{Reflection, ReflectionClass, ReflectionMethod, ReflectionProperty,
-    ReflectionInterface, ReflectionTrait};
+    ReflectionInterface, ReflectionTrait, ReflectionNamespace};
 use froq\reflection\internal\reflector\{AttributeReflector, InterfaceReflector, TraitReflector,
     ParentReflector, MethodReflector, PropertyReflector};
 use froq\util\Objects;
@@ -66,6 +66,16 @@ trait ClassTrait
     public function getNamespace(bool $baseOnly = false): string
     {
         return Objects::getNamespace($this->reference, $baseOnly);
+    }
+
+    /**
+     * Get declaring namespace.
+     *
+     * @return froq\reflection\ReflectionNamespace
+     */
+    public function getDeclaringNamespace(): ReflectionNamespace
+    {
+        return new ReflectionNamespace($this->getNamespace());
     }
 
     /**
