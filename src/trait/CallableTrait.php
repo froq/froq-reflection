@@ -59,9 +59,11 @@ trait CallableTrait
     /** @magic */
     public function __debugInfo(): array
     {
-        return ($this->reference->reflection instanceof \ReflectionMethod)
-             ? ['name' => $this->reference->reflection->name, 'class' => $this->reference->reflection->class]
-             : ['name' => $this->reference->reflection->name];
+        if ($this->reference->reflection instanceof \ReflectionMethod) {
+            return ['name' => $this->reference->reflection->name,
+                    'class' => $this->reference->reflection->class];
+        }
+        return ['name' => $this->reference->reflection->name];
     }
 
     /**
