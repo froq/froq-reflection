@@ -26,8 +26,8 @@ class ReflectionObject extends \ReflectionObject
      */
     public function __construct(object $target)
     {
-        $this->reference = $target;
-
         parent::__construct($target);
+
+        $this->reference = $target;
     }
 }
