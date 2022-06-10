@@ -5,20 +5,21 @@
  */
 declare(strict_types=1);
 
-namespace froq\reflection\trait;
+namespace froq\reflection\internal\trait;
 
 use froq\reflection\{Reflection, ReflectionCallable, ReflectionClass, ReflectionParameter,
-    ReflectionAttribute, ReflectionInterface, ReflectionTrait, ReflectionType};
-use froq\reflection\reflector\{AttributeReflector, InterfaceReflector, TraitReflector,
+    ReflectionInterface, ReflectionTrait, ReflectionType};
+use froq\reflection\internal\reflector\{AttributeReflector, InterfaceReflector, TraitReflector,
     ParameterReflector};
+use ReflectionAttribute;
 use Set;
 
 /**
  * An internal trait, used by `ReflectionCallable`, `ReflectionMethod` and
  * `ReflectionFunction` classes.
  *
- * @package froq\reflection\
- * @object  froq\reflection\CallableTrait
+ * @package froq\reflection\internal\trait
+ * @object  froq\reflection\internal\trait\CallableTrait
  * @author  Kerem Güneş
  * @since   5.27, 6.0
  * @internal
@@ -127,7 +128,7 @@ trait CallableTrait
      * @param  string $name
      * @return ReflectionAttribute|null
      */
-    public function getAttribute(string $name): \ReflectionAttribute|null
+    public function getAttribute(string $name): ReflectionAttribute|null
     {
         return (new AttributeReflector($this))->getAttribute($name);
     }
@@ -249,7 +250,7 @@ trait CallableTrait
      *
      * @return Set<froq\reflection\ReflectionParameter>
      */
-    public function parameters(): \Set
+    public function parameters(): Set
     {
         return (new ParameterReflector($this))->parameters();
     }

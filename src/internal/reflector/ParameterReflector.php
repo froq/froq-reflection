@@ -5,15 +5,16 @@
  */
 declare(strict_types=1);
 
-namespace froq\reflection\reflector;
+namespace froq\reflection\internal\reflector;
 
 use froq\reflection\ReflectionParameter;
+use Set;
 
 /**
  * Parameter reflector class.
  *
- * @package froq\reflection\reflector
- * @object  froq\reflection\reflector\ParameterReflector
+ * @package froq\reflection\internal\reflector
+ * @object  froq\reflection\internal\reflector\ParameterReflector
  * @author  Kerem Güneş
  * @since   6.0
  * @internal
@@ -25,9 +26,9 @@ class ParameterReflector extends Reflector
      *
      * @return Set
      */
-    public function parameters(): \Set
+    public function parameters(): Set
     {
-        return (new \Set($this->collect()))
+        return (new Set($this->collect()))
             ->map(fn($name) => $this->convert($name));
     }
 

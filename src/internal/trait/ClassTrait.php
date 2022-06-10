@@ -5,20 +5,21 @@
  */
 declare(strict_types=1);
 
-namespace froq\reflection\trait;
+namespace froq\reflection\internal\trait;
 
-use froq\reflection\{ReflectionClass, ReflectionMethod, ReflectionProperty,
-    ReflectionAttribute, ReflectionInterface, ReflectionTrait};
-use froq\reflection\reflector\{AttributeReflector, InterfaceReflector, TraitReflector,
+use froq\reflection\{Reflection, ReflectionClass, ReflectionMethod, ReflectionProperty,
+    ReflectionInterface, ReflectionTrait};
+use froq\reflection\internal\reflector\{AttributeReflector, InterfaceReflector, TraitReflector,
     ParentReflector, MethodReflector, PropertyReflector};
 use froq\util\Objects;
+use ReflectionAttribute;
 use Set;
 
 /**
  * An internal trait, used by `ReflectionClass` and `ReflectionObject` classes.
  *
- * @package froq\reflection\trait
- * @object  froq\reflection\trait\ClassTrait
+ * @package froq\reflection\internal\trait
+ * @object  froq\reflection\internal\trait\ClassTrait
  * @author  Kerem Güneş
  * @since   5.27, 6.0
  * @internal
@@ -65,6 +66,16 @@ trait ClassTrait
     public function getNamespace(bool $baseOnly = false): string
     {
         return Objects::getNamespace($this->reference, $baseOnly);
+    }
+
+    /**
+     * Get modifier names.
+     *
+     * @return array
+     */
+    public function getModifierNames(): array
+    {
+        return Reflection::getModifierNames($this->getModifiers());
     }
 
     /**
@@ -164,7 +175,7 @@ trait ClassTrait
      * @param  string $name
      * @return ReflectionAttribute|null
      */
-    public function getAttribute(string $name): \ReflectionAttribute|null
+    public function getAttribute(string $name): ReflectionAttribute|null
     {
         return (new AttributeReflector($this))->getAttribute($name);
     }

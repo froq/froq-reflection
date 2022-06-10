@@ -17,5 +17,5 @@ namespace froq\reflection;
  */
 class ReflectionFunction extends \ReflectionFunction
 {
-    use trait\CallableTrait;
+    use internal\trait\CallableTrait;
 }

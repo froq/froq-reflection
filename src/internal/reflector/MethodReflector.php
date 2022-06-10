@@ -5,15 +5,16 @@
  */
 declare(strict_types=1);
 
-namespace froq\reflection\reflector;
+namespace froq\reflection\internal\reflector;
 
 use froq\reflection\ReflectionMethod;
+use Set;
 
 /**
  * Method reflector class.
  *
- * @package froq\reflection\reflector
- * @object  froq\reflection\reflector\MethodReflector
+ * @package froq\reflection\internal\reflector
+ * @object  froq\reflection\internal\reflector\MethodReflector
  * @author  Kerem Güneş
  * @since   6.0
  * @internal
@@ -25,9 +26,9 @@ class MethodReflector extends Reflector
      *
      * @return Set<froq\reflection\ReflectionMethod>
      */
-    public function methods(): \Set
+    public function methods(): Set
     {
-        return (new \Set($this->collect()))
+        return (new Set($this->collect()))
             ->map(fn($ref) => new ReflectionMethod($ref->class, $ref->name));
     }
 

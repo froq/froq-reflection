@@ -17,7 +17,7 @@ namespace froq\reflection;
  */
 class ReflectionClass extends \ReflectionClass
 {
-    use trait\ClassTrait;
+    use internal\trait\ClassTrait;
 
     /**
      * Constructor.

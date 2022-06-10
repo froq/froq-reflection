@@ -5,13 +5,16 @@
  */
 declare(strict_types=1);
 
-namespace froq\reflection\reflector;
+namespace froq\reflection\internal\reflector;
+
+use ReflectionAttribute;
+use Set;
 
 /**
  * Attribute reflector class.
  *
- * @package froq\reflection\reflector
- * @object  froq\reflection\reflector\AttributeReflector
+ * @package froq\reflection\internal\reflector
+ * @object  froq\reflection\internal\reflector\AttributeReflector
  * @author  Kerem Güneş
  * @since   6.0
  * @internal
@@ -23,9 +26,9 @@ class AttributeReflector extends Reflector
      *
      * @return Set<ReflectionAttribute>
      */
-    public function attributes(): \Set
+    public function attributes(): Set
     {
-        return new \Set($this->reflector->getAttributes());
+        return new Set($this->reflector->getAttributes());
     }
 
     /**
@@ -50,7 +53,7 @@ class AttributeReflector extends Reflector
      * @param  string $name
      * @return ReflectionAttribute|null
      */
-    public function getAttribute(string $name): \ReflectionAttribute|null
+    public function getAttribute(string $name): ReflectionAttribute|null
     {
         foreach ($this->reflector->getAttributes() as $attribute) {
             if ($attribute->getName() == $name) {

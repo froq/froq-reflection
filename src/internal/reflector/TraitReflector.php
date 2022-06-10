@@ -5,16 +5,17 @@
  */
 declare(strict_types=1);
 
-namespace froq\reflection\reflector;
+namespace froq\reflection\internal\reflector;
 
-use froq\reflection\ReflectionTrait;
+use froq\reflection\{ReflectionTrait, ReflectionCallable};
 use froq\util\Objects;
+use Set;
 
 /**
  * Trait reflector class.
  *
- * @package froq\reflection\reflector
- * @object  froq\reflection\reflector\TraitReflector
+ * @package froq\reflection\internal\reflector
+ * @object  froq\reflection\internal\reflector\TraitReflector
  * @author  Kerem Güneş
  * @since   6.0
  * @internal
@@ -26,9 +27,9 @@ class TraitReflector extends Reflector
      *
      * @return Set<froq\reflection\ReflectionTrait>
      */
-    public function traits(): \Set
+    public function traits(): Set
     {
-        return (new \Set($this->getTraitNames()))
+        return (new Set($this->getTraitNames()))
             ->map(fn($name) => new ReflectionTrait($name));
     }
 
@@ -80,12 +81,16 @@ class TraitReflector extends Reflector
      */
     private function collect(): array
     {
+
+        if ($this->reflector instanceof \ReflectionClass
+            || $this->reflector instanceof \ReflectionObject) {
+            return Objects::getTraits($this->reflector->name, all: true);
+        }
+
         $ret = [];
 
-        if ($this->reflector instanceof \ReflectionClass ||
-            $this->reflector instanceof \ReflectionObject) {
-            $ret = Objects::getTraits($this->reflector->name, all: true);
-        } elseif ($this->reflector instanceof \ReflectionMethod) {
+        if ($this->reflector instanceof \ReflectionMethod
+            || $this->reflector instanceof ReflectionCallable) {
             $ret = array_filter(
                 $this->reflector->getDeclaringClass()->getTraits(),
                 fn($ref) => (

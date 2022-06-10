@@ -18,7 +18,7 @@ namespace froq\reflection;
  */
 class ReflectionCallable implements \Reflector
 {
-    use trait\CallableTrait;
+    use internal\trait\CallableTrait;
 
     /**
      * Proxy for reflection object properties.

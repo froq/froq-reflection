@@ -5,15 +5,16 @@
  */
 declare(strict_types=1);
 
-namespace froq\reflection\reflector;
+namespace froq\reflection\internal\reflector;
 
 use froq\reflection\ReflectionProperty;
+use Set;
 
 /**
  * Property reflector class.
  *
- * @package froq\reflection\reflector
- * @object  froq\reflection\reflector\PropertyReflector
+ * @package froq\reflection\internal\reflector
+ * @object  froq\reflection\internal\reflector\PropertyReflector
  * @author  Kerem Güneş
  * @since   6.0
  * @internal
@@ -25,9 +26,9 @@ class PropertyReflector extends Reflector
      *
      * @return Set<froq\reflection\ReflectionProperty>
      */
-    public function properties(): \Set
+    public function properties(): Set
     {
-        return (new \Set($this->collect()))
+        return (new Set($this->collect()))
             ->map(fn($name) => $this->convert($name));
     }
 

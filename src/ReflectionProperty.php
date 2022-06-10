@@ -7,7 +7,8 @@ declare(strict_types=1);
 
 namespace froq\reflection;
 
-use froq\reflection\reflector\{AttributeReflector, TraitReflector};
+use froq\reflection\internal\reflector\{AttributeReflector, TraitReflector};
+use ReflectionAttribute;
 use Set;
 
 /**
@@ -90,7 +91,7 @@ class ReflectionProperty extends \ReflectionProperty
      * @param  string $name
      * @return ReflectionAttribute|null
      */
-    public function getAttribute(string $name): \ReflectionAttribute|null
+    public function getAttribute(string $name): ReflectionAttribute|null
     {
         return (new AttributeReflector($this))->getAttribute($name);
     }

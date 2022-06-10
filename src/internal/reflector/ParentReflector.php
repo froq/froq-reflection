@@ -5,16 +5,17 @@
  */
 declare(strict_types=1);
 
-namespace froq\reflection\reflector;
+namespace froq\reflection\internal\reflector;
 
 use froq\reflection\ReflectionClass;
 use froq\util\Objects;
+use Set;
 
 /**
  * Parent (class) reflector class.
  *
- * @package froq\reflection\reflector
- * @object  froq\reflection\reflector\ParentReflector
+ * @package froq\reflection\internal\reflector
+ * @object  froq\reflection\internal\reflector\ParentReflector
  * @author  Kerem Güneş
  * @since   6.0
  * @internal
@@ -26,9 +27,9 @@ class ParentReflector extends Reflector
      *
      * @return Set<froq\reflection\ReflectionClass>
      */
-    public function parents(): \Set
+    public function parents(): Set
     {
-        return (new \Set($this->getParentNames()))
+        return (new Set($this->getParentNames()))
             ->map(fn($name) => new ReflectionClass($name));
     }
 

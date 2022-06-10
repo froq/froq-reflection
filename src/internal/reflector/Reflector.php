@@ -5,13 +5,13 @@
  */
 declare(strict_types=1);
 
-namespace froq\reflection\reflector;
+namespace froq\reflection\internal\reflector;
 
 /**
  * Base reflector class.
  *
- * @package froq\reflection\reflector
- * @object  froq\reflection\reflector\Reflector
+ * @package froq\reflection\internal\reflector
+ * @object  froq\reflection\internal\reflector\Reflector
  * @author  Kerem Güneş
  * @since   6.0
  * @internal

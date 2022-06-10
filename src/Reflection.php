@@ -18,7 +18,7 @@ namespace froq\reflection;
 class Reflection extends \Reflection
 {
     /**
-     * Get visibility.
+     * Get visibility (for class constants, methods and properties).
      *
      * @return Reflector $reflector
      * @return string
