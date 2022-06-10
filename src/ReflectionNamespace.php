@@ -203,10 +203,12 @@ class ReflectionNamespace implements \Reflector
 
     /**
      * Filter class, interface, trait names these start with self namespace.
+     *
+     * Note: This method returns all names for global scope.
      */
     private function filterNames(array $names): array
     {
-        $namespace = $this->name . '\\';
+        $namespace = ltrim($this->name . '\\', '\\');
         return array_filter_list($names, fn($name) => str_starts_with($name, $namespace));
     }
 
