@@ -28,7 +28,7 @@ class AttributeReflector extends Reflector
      */
     public function attributes(): Set
     {
-        return new Set($this->reflector->getAttributes());
+        return new Set($this->collect());
     }
 
     /**
@@ -39,7 +39,7 @@ class AttributeReflector extends Reflector
      */
     public function hasAttribute(string $name): bool
     {
-        foreach ($this->reflector->getAttributes() as $attribute) {
+        foreach ($this->collect() as $attribute) {
             if ($attribute->getName() == $name) {
                 return true;
             }
@@ -55,7 +55,7 @@ class AttributeReflector extends Reflector
      */
     public function getAttribute(string $name): ReflectionAttribute|null
     {
-        foreach ($this->reflector->getAttributes() as $attribute) {
+        foreach ($this->collect() as $attribute) {
             if ($attribute->getName() == $name) {
                 return $attribute;
             }
@@ -70,10 +70,14 @@ class AttributeReflector extends Reflector
      */
     public function getAttributeNames(): array
     {
-        $names = [];
-        foreach ($this->reflector->getAttributes() as $attribute) {
-            $names[] = $attribute->getName();
-        }
-        return $names;
+        return array_map(fn($ref) => $ref->getName(), $this->collect());
+    }
+
+    /**
+     * Collect attributes.
+     */
+    private function collect(): array
+    {
+        return $this->reflector->getAttributes();
     }
 }
