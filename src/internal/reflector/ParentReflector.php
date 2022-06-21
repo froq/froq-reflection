@@ -36,11 +36,12 @@ class ParentReflector extends Reflector
     /**
      * Get parent.
      *
+     * @param  bool $baseOnly
      * @return froq\reflection\ReflectionClass|null
      */
-    public function getParent(): ReflectionClass|null
+    public function getParent(bool $baseOnly = false): ReflectionClass|null
     {
-        $ret = $this->getParentName();
+        $ret = $this->getParentName($baseOnly);
 
         return $ret ? new ReflectionClass($ret) : null;
     }
@@ -60,11 +61,12 @@ class ParentReflector extends Reflector
     /**
      * Get parent name.
      *
+     * @param  bool $baseOnly
      * @return string
      */
-    public function getParentName(): string
+    public function getParentName(bool $baseOnly = false): string
     {
-        return (string) Objects::getParent($this->reflector->name);
+        return (string) Objects::getParent($this->reflector->name, $baseOnly);
     }
 
     /**

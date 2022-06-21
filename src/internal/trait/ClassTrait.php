@@ -101,11 +101,12 @@ trait ClassTrait
     /**
      * Get parent.
      *
+     * @param  bool $baseOnly
      * @return froq\reflection\ReflectionClass|null
      */
-    public function getParent(): ReflectionClass|null
+    public function getParent(bool $baseOnly = false): ReflectionClass|null
     {
-        return (new ParentReflector($this))->getParent();
+        return (new ParentReflector($this))->getParent($baseOnly);
     }
 
     /**
@@ -121,11 +122,12 @@ trait ClassTrait
     /**
      * Get parent name.
      *
+     * @param  bool $baseOnly
      * @return string
      */
-    public function getParentName(): string
+    public function getParentName(bool $baseOnly = false): string
     {
-        return (new ParentReflector($this))->getParentName();
+        return (new ParentReflector($this))->getParentName($baseOnly);
     }
 
     /**
@@ -141,13 +143,14 @@ trait ClassTrait
     /**
      * Get parent class.
      *
+     * @param  bool $baseOnly
      * @return froq\reflection\ReflectionClass
      * @override
      */
     #[\ReturnTypeWillChange]
-    public function getParentClass(): ReflectionClass|null
+    public function getParentClass(bool $baseOnly = false): ReflectionClass|null
     {
-        return $this->getParent();
+        return $this->getParent($baseOnly);
     }
 
     /**
