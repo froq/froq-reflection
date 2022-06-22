@@ -47,6 +47,7 @@ class ReflectionProperty extends \ReflectionProperty
      * Get class.
      *
      * @return string
+     * @missing
      */
     public function getClass(): string
     {
