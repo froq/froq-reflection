@@ -18,17 +18,17 @@ namespace froq\reflection;
 class Reflection extends \Reflection
 {
     /**
-     * Get visibility (for class constants, methods and properties).
+     * Get visibility (for class constants, methods and property reflections).
      *
-     * @return Reflector $reflector
+     * @return Reflector $ref
      * @return string
      */
-    public static function getVisibility(\Reflector $reflector): string
+    public static function getVisibility(\Reflector $ref): string
     {
         return match (true) {
-            $reflector->isPublic()  => 'public',
-            $reflector->isPrivate() => 'private',
-            default                 => 'protected'
+            $ref->isPublic()  => 'public',
+            $ref->isPrivate() => 'private',
+            default           => 'protected'
         };
     }
 }
