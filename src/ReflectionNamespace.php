@@ -208,7 +208,7 @@ class ReflectionNamespace implements \Reflector
      */
     private function filterNames(array $names): array
     {
-        $namespace = ltrim($this->name . '\\', '\\');
+        $namespace = ltrim($this->name, '\\') . '\\';
         return array_filter_list($names, fn($name) => str_starts_with($name, $namespace));
     }
 
