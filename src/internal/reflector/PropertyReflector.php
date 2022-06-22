@@ -97,8 +97,14 @@ class PropertyReflector extends Reflector
      */
     public function getPropertyValues(int $filter = null, bool $assoc = false): array
     {
+        // Prevent "non-instantiated class" error.
+        $object = is_object($this->ref->reference);
+
         $values = array_map(
-            fn($name) => $this->convert($name)->getValue(),
+            fn($name) => (
+                $object ? $this->convert($name)->getValue()
+                        : $this->convert($name)->getDefaultValue()
+            ),
             $names = $this->collect($filter)
         );
 
