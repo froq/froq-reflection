@@ -97,6 +97,14 @@ class InterfaceReflector extends Reflector
                     $ref->getMethod($this->reflector->name)->class == $ref->name
                 )
             );
+        } elseif ($this->reflector instanceof \ReflectionClassConstant) {
+            $ret = array_filter(
+                $this->reflector->getDeclaringClass()->getInterfaces(),
+                fn($ref) => (
+                    $ref->hasConstant($this->reflector->name) &&
+                    $ref->getReflectionConstant($this->reflector->name)->class == $ref->name
+                )
+            );
         }
 
         return array_values($ret);

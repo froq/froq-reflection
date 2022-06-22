@@ -7,10 +7,10 @@ declare(strict_types=1);
 
 namespace froq\reflection\internal\trait;
 
-use froq\reflection\{Reflection, ReflectionClass, ReflectionMethod, ReflectionProperty,
+use froq\reflection\{Reflection, ReflectionClass, ReflectionClassConstant, ReflectionProperty, ReflectionMethod,
     ReflectionInterface, ReflectionTrait, ReflectionNamespace};
 use froq\reflection\internal\reflector\{AttributeReflector, InterfaceReflector, TraitReflector,
-    ParentReflector, MethodReflector, PropertyReflector};
+    ParentReflector, ClassConstantReflector, PropertyReflector, MethodReflector};
 use froq\util\Objects;
 use ReflectionAttribute;
 use Set;
@@ -333,6 +333,93 @@ trait ClassTrait
     public function getMethodNames(int $filter = null): array
     {
         return (new MethodReflector($this))->getMethodNames($filter);
+    }
+
+    /**
+     * Set of constants.
+     *
+     * @return Set<froq\reflection\ReflectionClassConstant>
+     */
+    public function constants(): Set
+    {
+        return (new ClassConstantReflector($this))->constants();
+    }
+
+    /**
+     * Has own constant.
+     *
+     * @param  string $name
+     * @return bool
+     */
+    public function hasOwnConstant(string $name): bool
+    {
+        return (new ClassConstantReflector($this))->hasOwnConstant($name);
+    }
+
+    /**
+     * Get constant.
+     *
+     * @param  string $name
+     * @return array<mixed>
+     * @override
+     */
+    public function getConstant(string $name): ReflectionClassConstant|null
+    {
+        return (new ClassConstantReflector($this))->getConstant($name);
+    }
+
+    /**
+     * Get constants.
+     *
+     * @param  int|null $filter
+     * @return array<froq\reflection\ReflectionClassConstant>
+     * @override
+     */
+    public function getConstants(int $filter = null): array
+    {
+        return (new ClassConstantReflector($this))->getConstants($filter);
+    }
+
+    /**
+     * Get constant names.
+     *
+     * @param  int|null $filter
+     * @return array<string>
+     * @missing
+     */
+    public function getConstantNames(int $filter = null): array
+    {
+        return (new ClassConstantReflector($this))->getConstantNames($filter);
+    }
+
+    /**
+     * Get constant values.
+     *
+     * @param  int|null $filter
+     * @param  bool     $assoc
+     * @return array<mixed>
+     * @missing
+     */
+    public function getConstantValues(int $filter = null, bool $assoc = false): array
+    {
+        return (new ClassConstantReflector($this))->getConstantValues($filter, $assoc);
+    }
+
+    /**
+     * @override
+     */
+    #[\ReturnTypeWillChange]
+    public function getReflectionConstant(string $name): ReflectionClassConstant|null
+    {
+        return $this->getConstant($name);
+    }
+
+    /**
+     * @override
+     */
+    public function getReflectionConstants(int $filter = null): array
+    {
+        return $this->getConstants($filter);
     }
 
     /**
