@@ -87,13 +87,18 @@ trait CallableTrait
     /**
      * Get declaring class.
      *
-     * @return froq\reflection\ReflectionClass
+     * @return froq\reflection\{ReflectionClass|ReflectionTrait|ReflectionInterface}
      * @throws ReflectionException
      */
-    public function getDeclaringClass(): ReflectionClass
+    public function getDeclaringClass(): ReflectionClass|ReflectionTrait|ReflectionInterface
     {
         if ($this->reference->reflection instanceof \ReflectionMethod) {
-            return new ReflectionClass($this->reference->reflection->getDeclaringClass()->name);
+            $ref = $this->reference->reflection->getDeclaringClass();
+            return match (true) {
+                default => new ReflectionClass($ref->name),
+                $ref->isTrait() => new ReflectionTrait($ref->name),
+                $ref->isInterface() => new ReflectionInterface($ref->name),
+            };
         }
 
         throw new \ReflectionException(sprintf(

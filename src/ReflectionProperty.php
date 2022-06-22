@@ -57,12 +57,17 @@ class ReflectionProperty extends \ReflectionProperty
     /**
      * Get declaring class.
      *
-     * @return froq\reflection\ReflectionClass
+     * @return froq\reflection\{ReflectionClass|ReflectionTrait}
      * @override
      */
-    public function getDeclaringClass(): ReflectionClass
+    public function getDeclaringClass(): ReflectionClass|ReflectionTrait
     {
-        return new ReflectionClass(parent::getDeclaringClass()->name);
+        $ref = parent::getDeclaringClass();
+
+        return match (true) {
+            default => new ReflectionClass($ref->name),
+            $ref->isTrait() => new ReflectionTrait($ref->name),
+        };
     }
 
     /**

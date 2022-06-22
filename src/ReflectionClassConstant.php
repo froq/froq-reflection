@@ -35,12 +35,17 @@ class ReflectionClassConstant extends \ReflectionClassConstant
     /**
      * Get declaring class.
      *
-     * @return froq\reflection\ReflectionClass
+     * @return froq\reflection\{ReflectionClass|ReflectionInterface}
      * @override
      */
-    public function getDeclaringClass(): ReflectionClass
+    public function getDeclaringClass(): ReflectionClass|ReflectionInterface
     {
-        return new ReflectionClass(parent::getDeclaringClass()->name);
+        $ref = parent::getDeclaringClass();
+
+        return match (true) {
+            default => new ReflectionClass($ref->name),
+            $ref->isInterface() => new ReflectionInterface($ref->name),
+        };
     }
 
     /**
