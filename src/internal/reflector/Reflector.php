@@ -23,15 +23,15 @@ abstract class Reflector
      *
      * @var Reflector
      */
-    protected \Reflector $reflector;
+    protected \Reflector $ref;
 
     /**
      * Constructor.
      *
-     * @param Reflector $reflector
+     * @param Reflector $ref
      */
-    public function __construct(\Reflector $reflector)
+    public function __construct(\Reflector $ref)
     {
-        $this->reflector = $reflector;
+        $this->ref = $ref;
     }
 }

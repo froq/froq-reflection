@@ -81,28 +81,28 @@ class InterfaceReflector extends Reflector
      */
     private function collect(): array
     {
-        if ($this->reflector instanceof \ReflectionClass
-            || $this->reflector instanceof \ReflectionObject) {
-            return Objects::getInterfaces($this->reflector->name);
+        if ($this->ref instanceof \ReflectionClass
+            || $this->ref instanceof \ReflectionObject) {
+            return Objects::getInterfaces($this->ref->name);
         }
 
         $ret = [];
 
-        if ($this->reflector instanceof \ReflectionMethod
-            || $this->reflector instanceof ReflectionCallable) {
+        if ($this->ref instanceof \ReflectionMethod
+            || $this->ref instanceof ReflectionCallable) {
             $ret = array_filter(
-                $this->reflector->getDeclaringClass()->getInterfaces(),
+                $this->ref->getDeclaringClass()->getInterfaces(),
                 fn($ref) => (
-                    $ref->hasMethod($this->reflector->name) &&
-                    $ref->getMethod($this->reflector->name)->class == $ref->name
+                    $ref->hasMethod($this->ref->name) &&
+                    $ref->getMethod($this->ref->name)->class == $ref->name
                 )
             );
-        } elseif ($this->reflector instanceof \ReflectionClassConstant) {
+        } elseif ($this->ref instanceof \ReflectionClassConstant) {
             $ret = array_filter(
-                $this->reflector->getDeclaringClass()->getInterfaces(),
+                $this->ref->getDeclaringClass()->getInterfaces(),
                 fn($ref) => (
-                    $ref->hasConstant($this->reflector->name) &&
-                    $ref->getReflectionConstant($this->reflector->name)->class == $ref->name
+                    $ref->hasConstant($this->ref->name) &&
+                    $ref->getReflectionConstant($this->ref->name)->class == $ref->name
                 )
             );
         }

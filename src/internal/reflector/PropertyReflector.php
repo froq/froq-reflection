@@ -111,7 +111,7 @@ class PropertyReflector extends Reflector
     private function collect(int $filter = null): array
     {
         $ret = [];
-        $ref = new \ReflectionClass($this->reflector->reference);
+        $ref = new \ReflectionClass($this->ref->reference);
 
         foreach ($ref->getProperties($filter) as $property) {
             $ret[$property->name] = $property->name;
@@ -123,8 +123,8 @@ class PropertyReflector extends Reflector
         }
 
         // Dynamic properties.
-        if (is_object($this->reflector->reference)) {
-            foreach (array_keys(get_object_vars($this->reflector->reference)) as $var) {
+        if (is_object($this->ref->reference)) {
+            foreach (array_keys(get_object_vars($this->ref->reference)) as $var) {
                 $ret[$var] ??= $var;
             }
         }
@@ -137,6 +137,6 @@ class PropertyReflector extends Reflector
      */
     private function convert(string $name): ReflectionProperty
     {
-        return new ReflectionProperty($this->reflector->reference, $name);
+        return new ReflectionProperty($this->ref->reference, $name);
     }
 }

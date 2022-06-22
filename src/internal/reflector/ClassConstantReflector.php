@@ -40,12 +40,12 @@ class ClassConstantReflector extends Reflector
      */
     public function hasOwnConstant(string $name): bool
     {
-        if (!$this->reflector->hasConstant($name)) {
+        if (!$this->ref->hasConstant($name)) {
             return false;
         }
 
         // Can be declared in an interface.
-        if ($this->reflector->name != $this->getConstant($name)->getDeclaringClass()->name) {
+        if ($this->ref->name != $this->getConstant($name)->getDeclaringClass()->name) {
             return false;
         }
 
@@ -106,7 +106,7 @@ class ClassConstantReflector extends Reflector
      */
     private function collect(int $filter = null): array
     {
-        $ref = new \ReflectionClass($this->reflector->name);
+        $ref = new \ReflectionClass($this->ref->name);
 
         return $ref->getConstants($filter);
     }
@@ -116,6 +116,6 @@ class ClassConstantReflector extends Reflector
      */
     private function convert(string $name): ReflectionClassConstant
     {
-        return new ReflectionClassConstant($this->reflector->name, $name);
+        return new ReflectionClassConstant($this->ref->name, $name);
     }
 }

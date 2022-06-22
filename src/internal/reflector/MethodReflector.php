@@ -41,7 +41,7 @@ class MethodReflector extends Reflector
     public function getMethod(string $name): ReflectionMethod|null
     {
         try {
-            return new ReflectionMethod($this->reflector->name, $name);
+            return new ReflectionMethod($this->ref->name, $name);
         } catch (\Throwable) {
             return null;
         }
@@ -80,7 +80,7 @@ class MethodReflector extends Reflector
      */
     private function collect(int $filter = null): array
     {
-        $ref = new \ReflectionClass($this->reflector->name);
+        $ref = new \ReflectionClass($this->ref->name);
 
         return $ref->getMethods($filter);
     }

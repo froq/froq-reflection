@@ -78,6 +78,6 @@ class AttributeReflector extends Reflector
      */
     private function collect(): array
     {
-        return $this->reflector->getAttributes();
+        return $this->ref->getAttributes();
     }
 }
