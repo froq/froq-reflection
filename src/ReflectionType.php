@@ -46,15 +46,20 @@ class ReflectionType extends \ReflectionType implements \Reflector
             $nullable = true;
         }
 
-        // @tome: Null allways goes to the end.
+        // Place null to the end.
         if ($nullable && ($name != 'null' && $name != 'mixed')) {
             $name .= '|null';
         }
 
-        // @tome: Intersection-type not allows nulls.
         $this->delimiter = str_contains($name, '&') ? '&' : '|';
 
-        $name = implode($this->delimiter, array_unique(explode($this->delimiter, $name)));
+        $name = implode($this->delimiter,
+            $names = array_unique(explode($this->delimiter, $name)));
+
+        // @tome: Intersection-types don't allow nulls.
+        if ($this->delimiter == '|' && in_array('null', $names, true)) {
+            $nullable = true;
+        }
 
         $this->reference = (object) ['name' => $name, 'nullable' => $nullable];
     }
