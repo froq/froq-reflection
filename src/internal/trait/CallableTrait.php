@@ -37,12 +37,13 @@ trait CallableTrait
      */
     public function __construct(string|callable|array|object $callable, string $name = null)
     {
-        // When "Foo.bar" or "Foo::bar" given.
-        if (is_string($callable) && preg_match('~(.+)(?:\.|::)(\w+)~', $callable, $match)) {
+        // When "Foo::bar" given (not "Foo.bar" cos of anonymous classes (eg: ".../foo.php:123$0")).
+        if (is_string($callable) && preg_match('~(.+)(?=::)(\w+)~', $callable, $match)) {
             $callable = array_slice($match, 1);
         } elseif ($name !== null && (is_string($callable) || is_object($callable))) {
             $callable = [$callable, $name];
         }
+
 
         $this->reference = (object) [
             'callable'   => $callable,
