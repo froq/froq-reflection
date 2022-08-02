@@ -445,6 +445,17 @@ trait ClassTrait
     }
 
     /**
+     * Has own property.
+     *
+     * @param  string $name
+     * @return bool
+     */
+    public function hasOwnProperty(string $name): bool
+    {
+        return (new PropertyReflector($this))->hasOwnProperty($name);
+    }
+
+    /**
      * Get property.
      *
      * @param  string $name

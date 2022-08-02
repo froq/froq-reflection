@@ -50,6 +50,27 @@ class PropertyReflector extends Reflector
     }
 
     /**
+     * Check property existence (but not inherit).
+     *
+     * @param  string $name
+     * @return bool
+     */
+    public function hasOwnProperty(string $name): bool
+    {
+        // @keep: why?
+        // if (!$this->hasProperty($name)) {
+        //     return false;
+        // }
+
+        // Can be declared in a super class.
+        if ($this->ref->name != $this->getProperty($name)?->getDeclaringClass()->name) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Get property.
      *
      * @param  string $name
