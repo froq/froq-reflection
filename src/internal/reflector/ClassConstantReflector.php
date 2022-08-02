@@ -33,19 +33,20 @@ class ClassConstantReflector extends Reflector
     }
 
     /**
-     * Check constants existence (but not inherit).
+     * Check constant existence (but not inherit).
      *
      * @param  string $name
      * @return bool
      */
     public function hasOwnConstant(string $name): bool
     {
-        if (!$this->ref->hasConstant($name)) {
-            return false;
-        }
+        // @keep: why?
+        // if (!$this->ref->hasConstant($name)) {
+        //     return false;
+        // }
 
         // Can be declared in an interface.
-        if ($this->ref->name != $this->getConstant($name)->getDeclaringClass()->name) {
+        if ($this->ref->name != $this->getConstant($name)?->getDeclaringClass()->name) {
             return false;
         }
 
