@@ -245,7 +245,11 @@ class ReflectionProperty extends \ReflectionProperty
      */
     public function isNullable(): bool
     {
-        return (bool) $this->getType()?->isNullable();
+        if ($type = $this->getType()) {
+            return $type->isNullable();
+        }
+
+        return true;
     }
 
     /**
