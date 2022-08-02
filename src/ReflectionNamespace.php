@@ -29,7 +29,7 @@ class ReflectionNamespace implements \Reflector
     public function __construct(string $name)
     {
         if ($name !== '' && !preg_match('~^[a-z_][\w\\\]+$~i', $name)) {
-            throw new \ReflectionException('Invalid namespace: ' . $name);
+            throw new \ReflectionException(sprintf('Invalid namespace: "%s"', $name));
         }
 
         $this->name = trim($name, '\\');
