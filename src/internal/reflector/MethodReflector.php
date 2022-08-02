@@ -33,6 +33,27 @@ class MethodReflector extends Reflector
     }
 
     /**
+     * Check method existence (but not inherit).
+     *
+     * @param  string $name
+     * @return bool
+     */
+    public function hasOwnMethod(string $name): bool
+    {
+        // @keep: why?
+        // if (!$this->hasMethod($name)) {
+        //     return false;
+        // }
+
+        // Can be declared in a super class.
+        if ($this->ref->name != $this->getMethod($name)?->getDeclaringClass()->name) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Get method.
      *
      * @param  string $name

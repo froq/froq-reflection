@@ -300,6 +300,17 @@ trait ClassTrait
     }
 
     /**
+     * Has own method.
+     *
+     * @param  string $name
+     * @return bool
+     */
+    public function hasOwnMethod(string $name): bool
+    {
+        return (new MethodReflector($this))->hasOwnMethod($name);
+    }
+
+    /**
      * Get method.
      *
      * @param  string $name
