@@ -93,8 +93,7 @@ class ReflectionType extends \ReflectionType implements \Reflector
     /** @magic */
     public function __toString(): string
     {
-        return sprintf('Type [ %s, nullable: %s ]',
-            $this->reference->name, $this->reference->nullable ? 'true' : 'false');
+        return $this->reference->name;
     }
 
     /**
