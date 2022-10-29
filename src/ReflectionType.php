@@ -207,6 +207,17 @@ class ReflectionType extends \ReflectionType implements \Reflector
     }
 
     /**
+     * Static initializer for var types.
+     *
+     * @param  mixed $var
+     * @return froq\reflection\ReflectionType
+     */
+    public static function of(mixed $var): ReflectionType
+    {
+        return new ReflectionType(get_type($var));
+    }
+
+    /**
      * Static initializer for ReflectionType types.
      *
      * @param  ReflectionType $type
