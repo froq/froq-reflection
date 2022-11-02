@@ -30,7 +30,7 @@ class ReflectionClassConstant extends \ReflectionClassConstant
     public function __construct(string|object $classOrObjectOrConstant, string $constant = null)
     {
         if ( // When "Foo::BAR" given as single parameter.
-            is_null($constant) && is_string($classOrObjectOrConstant)
+            $constant === null && is_string($classOrObjectOrConstant)
             && preg_match('~(.+)::(\w+)~', $classOrObjectOrConstant, $match)
         ) {
             [$classOrObjectOrConstant, $constant] = array_slice($match, 1);
