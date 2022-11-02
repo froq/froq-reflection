@@ -44,7 +44,6 @@ trait CallableTrait
             $callable = [$callable, $name];
         }
 
-
         $this->reference = (object) [
             'callable'   => $callable,
             'reflection' => is_array($callable) ? new \ReflectionMethod(...$callable)
