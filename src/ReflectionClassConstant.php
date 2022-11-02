@@ -22,6 +22,24 @@ use Set;
 class ReflectionClassConstant extends \ReflectionClassConstant
 {
     /**
+     * Constructor.
+     *
+     * @param string|object $classOrObjectOrConstant
+     * @param string|null   $constant
+     */
+    public function __construct(string|object $classOrObjectOrConstant, string $constant = null)
+    {
+        if ( // When "Foo::BAR" given as single parameter.
+            is_null($constant) && is_string($classOrObjectOrConstant)
+            && preg_match('~(.+)::(\w+)~', $classOrObjectOrConstant, $match)
+        ) {
+            [$classOrObjectOrConstant, $constant] = array_slice($match, 1);
+        }
+
+        parent::__construct($classOrObjectOrConstant, $constant);
+    }
+
+    /**
      * Get class.
      *
      * @return string
