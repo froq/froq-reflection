@@ -45,9 +45,8 @@ class ReflectionCallable implements \Reflector
         }
 
         // Create internal reflection.
-        $reflection = is_array($callable)
-                    ? new \ReflectionMethod(...$callable)
-                    : new \ReflectionFunction($callable);
+        $reflection = is_array($callable) ? new \ReflectionMethod(...$callable)
+                                          : new \ReflectionFunction($callable);
 
         $this->setReference([
             'callable'   => $callable,
