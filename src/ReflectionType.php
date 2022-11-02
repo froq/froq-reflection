@@ -18,11 +18,7 @@ namespace froq\reflection;
  */
 class ReflectionType extends \ReflectionType implements \Reflector
 {
-    /** Name/nullable reference. */
-    public object $reference;
-
-    /** Typing delimiter. */
-    private string $delimiter;
+    use internal\trait\ReferenceTrait;
 
     /**
      * Constructor.
@@ -35,65 +31,82 @@ class ReflectionType extends \ReflectionType implements \Reflector
     {
         $name || throw new \ReflectionException('No name given');
 
+        $name = xstring($name);
+
         // Null/mixed is nullable.
-        if ($name == 'null' || $name == 'mixed') {
+        if ($name->equals(['null', 'mixed'], icase: true)) {
             $nullable = true;
         }
 
         // Uniform nullable types.
-        if ($name[0] == '?') {
-            $name = substr($name, 1);
+        if ($name->startsWith('?')) {
+            $name->slice(1);
             $nullable = true;
         }
 
         // Place null to the end.
-        if ($nullable && ($name != 'null' && $name != 'mixed')) {
-            $name .= '|null';
+        if ($nullable && !$name->equals(['null', 'mixed'], icase: true)) {
+            $name->append('|null');
         }
 
-        $this->delimiter = str_contains($name, '&') ? '&' : '|';
+        $delimiter = $name->contains('|') ? '|' : '&';
 
-        $name = implode($this->delimiter,
-            $names = array_unique(explode($this->delimiter, $name)));
+        $names = $name->xsplit($delimiter)->unique();
+        $name  = $names->xjoin($delimiter);
 
         // @tome: Intersection-types don't allow nulls.
-        if ($this->delimiter == '|' && in_array('null', $names, true)) {
+        if ($delimiter === '|' && $names->contains('null')) {
             $nullable = true;
         }
 
-        $this->reference = (object) ['name' => $name, 'nullable' => $nullable];
+        $this->setReference([
+            'name'     => $name,
+            'names'    => $names,
+            'nullable' => $nullable
+        ]);
     }
 
     /**
-     * Proxy for reference object properties.
+     * Proxy for reference properties.
      *
      * @param  string $property
-     * @return string|bool
+     * @return mixed
      * @throws ReflectionException
      * @magic
      */
-    public function __get(string $property): string|bool
+    public function __get(string $property): mixed
     {
-        if (isset($this->reference->$property)) {
-            return $this->reference->$property;
+        switch ($property) {
+            case 'name':
+                return $this->getName();
+            case 'names':
+                return $this->getNames();
+            case 'nullable':
+                return $this->isNullable();
+            default:
+                throw new \ReflectionException(sprintf(
+                    'Undefined property %s::$%s', $this::class, $property
+                ));
         }
-
-        throw new \ReflectionException(sprintf(
-            'Undefined property %s::$%s', $this::class, $property
-        ));
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __debugInfo(): array
     {
-        return ['name' => $this->reference->name,
-                'nullable' => $this->reference->nullable];
+        return [
+            'name'     => $this->getName(),
+            'nullable' => $this->isNullable()
+        ];
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __toString(): string
     {
-        return $this->reference->name;
+        return $this->getName();
     }
 
     /**
@@ -103,7 +116,7 @@ class ReflectionType extends \ReflectionType implements \Reflector
      */
     public function getName(): string
     {
-        return $this->reference->name;
+        return $this->reference->name->toString();
     }
 
     /**
@@ -113,7 +126,7 @@ class ReflectionType extends \ReflectionType implements \Reflector
      */
     public function getPureName(): string|null
     {
-        return $this->isNamed() ? $this->getNames()[0] : null;
+        return $this->isNamed() ? $this->reference->names->first() : null;
     }
 
     /**
@@ -123,7 +136,7 @@ class ReflectionType extends \ReflectionType implements \Reflector
      */
     public function getNames(): array
     {
-        return explode($this->delimiter, $this->reference->name);
+        return $this->reference->names->toArray();
     }
 
     /**
@@ -133,18 +146,9 @@ class ReflectionType extends \ReflectionType implements \Reflector
      */
     public function getTypes(): array
     {
-        return array_map(fn($name) => new ReflectionType($name), $this->getNames());
-    }
-
-    /**
-     * Check whether type is builtin.
-     *
-     * @return bool
-     */
-    public function isBuiltin(): bool
-    {
-        return preg_test('~^(int|float|string|bool|array|object|callable|iterable|mixed)(\|null)?$~',
-            $this->getName());
+        return $this->reference->names->copy()
+            ->apply(fn(string $name): ReflectionType => new ReflectionType($name))
+            ->toArray();
     }
 
     /**
@@ -154,7 +158,7 @@ class ReflectionType extends \ReflectionType implements \Reflector
      */
     public function isNamed(): bool
     {
-        return !$this->isUnion() && !$this->isIntersection();
+        return ($count = $this->count()) === 1 || ($count === 2 && $this->isNullable());
     }
 
     /**
@@ -164,7 +168,7 @@ class ReflectionType extends \ReflectionType implements \Reflector
      */
     public function isUnion(): bool
     {
-        return substr_count($this->getName(), '|') >= 2;
+        return !$this->isNamed() && $this->reference->name->contains('|');
     }
 
     /**
@@ -174,7 +178,41 @@ class ReflectionType extends \ReflectionType implements \Reflector
      */
     public function isIntersection(): bool
     {
-        return substr_count($this->getName(), '&') >= 1;
+        return !$this->isNamed() && $this->reference->name->contains('&');
+    }
+
+    /**
+     * Check whether type is single (eg: only `int`, but not `int|null`).
+     *
+     * @return bool
+     */
+    public function isSingle(): bool
+    {
+        return $this->count() === 1;
+    }
+
+    /**
+     * Check whether type is builtin.
+     *
+     * @return bool
+     */
+    public function isBuiltin(): bool
+    {
+        return $this->reference->name->test(
+            '~^(int|float|string|bool|array|object|callable|iterable|mixed|true|false|null)(\|null)?$~'
+        );
+    }
+
+    /**
+     * Check whether type is castable via `settype()` function.
+     *
+     * @return bool
+     */
+    public function isCastable(): bool
+    {
+        return $this->reference->name->test(
+            '~^(int|float|string|bool|array|object|null)$~'
+        );
     }
 
     /**
@@ -188,22 +226,85 @@ class ReflectionType extends \ReflectionType implements \Reflector
     }
 
     /**
-     * @alias isNullable()
+     * Check whether type is an existing class.
+     *
+     * @return bool
      */
-    public function allowsNull(): bool
+    public function isClass(): bool
     {
-        return $this->reference->nullable;
+        return !$this->isBuiltin() && $this->isNamed();
     }
 
     /**
-     * Check whether contains given type name.
+     * Check whether type is a type of given class.
+     *
+     * @param  string $class
+     * @return bool
+     */
+    public function isClassOf(string $class): bool
+    {
+        return !$this->isBuiltin() && $this->isNamed() && is_class_of($this->getName(), $class);
+    }
+
+    /**
+     * @alias isNullable()
+     * @override
+     */
+    public function allowsNull(): bool
+    {
+        return $this->isNullable();
+    }
+
+    /**
+     * Get count of types.
+     *
+     * @return int
+     */
+    public function count(): int
+    {
+        return $this->reference->names->count();
+    }
+
+    /**
+     * Get names as Set.
+     *
+     * @return Set
+     */
+    public function names(): \Set
+    {
+        return new \Set($this->getNames());
+    }
+
+    /**
+     * Get types as Set.
+     *
+     * @return Set
+     */
+    public function types(): \Set
+    {
+        return new \Set($this->getTypes());
+    }
+
+    /**
+     * Check whether type equals to given type.
      *
      * @param  string $name
      * @return bool
      */
-    public function contains(string $name): bool
+    public function equals(string $name): bool
     {
-        return in_array($name, $this->getNames(), true);
+        return $this->reference->name->equals($name);
+    }
+
+    /**
+     * Check whether contains given names.
+     *
+     * @param  string ...$names
+     * @return bool
+     */
+    public function contains(string ...$names): bool
+    {
+        return $this->reference->names->contains(...$names);
     }
 
     /**
