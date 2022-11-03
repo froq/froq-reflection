@@ -1,11 +1,12 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-reflection
  */
-declare(strict_types=1);
-
 namespace froq\reflection;
+
+use froq\reflection\internal\trait\ReferenceTrait;
+use froq\reflection\internal\reference\ParameterReference;
 
 /**
  * An extended `ReflectionParameter` class.
@@ -17,6 +18,8 @@ namespace froq\reflection;
  */
 class ReflectionParameter extends \ReflectionParameter
 {
+    use ReferenceTrait;
+
     /**
      * Constructor.
      *
@@ -33,6 +36,21 @@ class ReflectionParameter extends \ReflectionParameter
         }
 
         parent::__construct($functionOrMethod, $nameOrPosition);
+
+        $this->setReference(new ParameterReference(
+            callable : $functionOrMethod
+        ));
+    }
+
+    /**
+     * @magic
+     */
+    public function __debugInfo(): array
+    {
+        return [
+            'name'     => $this->name,
+            'function' => $this->reference->name()
+        ];
     }
 
     /**
@@ -59,6 +77,7 @@ class ReflectionParameter extends \ReflectionParameter
     public function getDeclaringClass(): ReflectionClass|null
     {
         $ref = parent::getDeclaringClass();
+
         if (!$ref) {
             return null;
         }
@@ -77,33 +96,41 @@ class ReflectionParameter extends \ReflectionParameter
      */
     public function getDeclaringMethod(): ReflectionMethod|null
     {
-        $ref = parent::getDeclaringFunction();
-
-        if ($ref && $ref instanceof \ReflectionMethod) {
-            return new ReflectionMethod($ref->class, $ref->name);
+        if ($this->reference->callable instanceof \Closure) {
+            return null;
         }
 
-        return null;
+        $ref = parent::getDeclaringFunction();
+
+        if ($ref instanceof \ReflectionFunction) {
+            return null;
+        }
+
+        return new ReflectionMethod($ref->class, $ref->name);
     }
 
     /**
      * Get declaring function.
      *
-     * @return froq\reflection\{ReflectionMethod|ReflectionFunction}|null
+     * Note: PHP Documents say, "Return Values: A ReflectionFunction object" but returns
+     * ReflectionMethod if the function is a Closure and defined in a class method.
+     *
+     * @return froq\reflection\{ReflectionFunction|ReflectionMethod}
      * @override
      */
-    #[\ReturnTypeWillChange]
-    public function getDeclaringFunction(): ReflectionMethod|ReflectionFunction|null
+    public function getDeclaringFunction(): ReflectionFunction|ReflectionMethod
     {
+        if ($this->reference->callable instanceof \Closure) {
+            return new ReflectionFunction($this->reference->callable);
+        }
+
         if ($ref = $this->getDeclaringMethod()) {
             return $ref;
         }
 
-        if ($ref = parent::getDeclaringFunction()) {
-            return new ReflectionFunction($ref->getClosure());
-        }
+        $ref = parent::getDeclaringFunction();
 
-        return null;
+        return new ReflectionFunction($ref->name);
     }
 
     /**

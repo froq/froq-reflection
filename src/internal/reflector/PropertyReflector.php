@@ -57,13 +57,13 @@ class PropertyReflector extends Reflector
      */
     public function hasOwnProperty(string $name): bool
     {
-        // @keep: why?
+        // @keep: Why? Cos' return type can change in ClassTrait.getProperty().
         // if (!$this->hasProperty($name)) {
         //     return false;
         // }
 
         // Can be declared in a super class.
-        if ($this->ref->name != $this->getProperty($name)?->getDeclaringClass()->name) {
+        if ($this->ref->name !== $this->getProperty($name)?->getDeclaringClass()->name) {
             return false;
         }
 
@@ -119,7 +119,7 @@ class PropertyReflector extends Reflector
     public function getPropertyValues(int $filter = null, bool $assoc = false): array
     {
         // Prevent "non-instantiated class" error.
-        $object = is_object($this->ref->reference);
+        $object = is_object($this->ref->getReference());
 
         $values = array_map(
             fn($name) => (
@@ -137,8 +137,10 @@ class PropertyReflector extends Reflector
      */
     private function collect(int $filter = null): array
     {
+        $reference = $this->ref->getReference();
+
         $ret = [];
-        $ref = new \ReflectionClass($this->ref->reference);
+        $ref = new \ReflectionClass($reference->target);
 
         foreach ($ref->getProperties($filter) as $property) {
             $ret[$property->name] = $property->name;
@@ -150,9 +152,9 @@ class PropertyReflector extends Reflector
         }
 
         // Dynamic properties.
-        if (is_object($this->ref->reference)) {
-            foreach (array_keys(get_object_vars($this->ref->reference)) as $var) {
-                $ret[$var] ??= $var;
+        if (is_object($reference->target)) {
+            foreach (array_keys(get_object_vars($reference->target)) as $var) {
+                array_key_exists($var, $ret) || $ret[$var] = $var;
             }
         }
 
@@ -164,6 +166,6 @@ class PropertyReflector extends Reflector
      */
     private function convert(string $name): ReflectionProperty
     {
-        return new ReflectionProperty($this->ref->reference, $name);
+        return new ReflectionProperty($this->ref->getReference()->target, $name);
     }
 }

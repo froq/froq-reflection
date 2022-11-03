@@ -40,13 +40,13 @@ class MethodReflector extends Reflector
      */
     public function hasOwnMethod(string $name): bool
     {
-        // @keep: why?
+        // @keep: Why? Cos' return type can change in ClassTrait.getMethod().
         // if (!$this->hasMethod($name)) {
         //     return false;
         // }
 
         // Can be declared in a super class.
-        if ($this->ref->name != $this->getMethod($name)?->getDeclaringClass()->name) {
+        if ($this->ref->name !== $this->getMethod($name)?->getDeclaringClass()->name) {
             return false;
         }
 

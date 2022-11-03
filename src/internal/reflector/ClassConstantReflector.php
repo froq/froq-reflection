@@ -40,13 +40,8 @@ class ClassConstantReflector extends Reflector
      */
     public function hasOwnConstant(string $name): bool
     {
-        // @keep: why?
-        // if (!$this->ref->hasConstant($name)) {
-        //     return false;
-        // }
-
-        // Can be declared in an interface.
-        if ($this->ref->name != $this->getConstant($name)?->getDeclaringClass()->name) {
+        // Can be declared in an interface or trait.
+        if ($this->ref->name !== $this->getConstant($name)?->getDeclaringClass()->name) {
             return false;
         }
 

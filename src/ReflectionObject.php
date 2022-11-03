@@ -1,11 +1,12 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-reflection
  */
-declare(strict_types=1);
-
 namespace froq\reflection;
+
+use froq\reflection\internal\trait\{ClassTrait, ReferenceTrait};
+use froq\reflection\internal\reference\ClassReference;
 
 /**
  * An extended `ReflectionObject` class.
@@ -17,7 +18,7 @@ namespace froq\reflection;
  */
 class ReflectionObject extends \ReflectionObject
 {
-    use internal\trait\ClassTrait;
+    use ClassTrait, ReferenceTrait;
 
     /**
      * Constructor.
@@ -28,6 +29,8 @@ class ReflectionObject extends \ReflectionObject
     {
         parent::__construct($target);
 
-        $this->reference = $target;
+        $this->setReference(new ClassReference(
+            target : $target
+        ));
     }
 }

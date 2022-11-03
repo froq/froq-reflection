@@ -6,6 +6,7 @@
 namespace froq\reflection;
 
 use froq\reflection\internal\trait\{CallableTrait, ReferenceTrait};
+use froq\reflection\internal\reference\CallableReference;
 
 /**
  * An extended `ReflectionMethod` class.
@@ -19,16 +20,21 @@ class ReflectionMethod extends \ReflectionMethod
 {
     use CallableTrait, ReferenceTrait;
 
+    /**
+     * Constructor.
+     *
+     * @param string|object $classOrObjectOrMethod
+     * @param string|null   $method
+     */
     public function __construct(string|object $classOrObjectOrMethod, string $method = null)
     {
         parent::__construct($classOrObjectOrMethod, $method);
 
-        // Create internal reflection.
         $reflection = new \ReflectionMethod($classOrObjectOrMethod, $method);
 
-        $this->setReference([
-            'callable'   => $classOrObjectOrMethod,
-            'reflection' => $reflection
-        ]);
+        $this->setReference(new CallableReference(
+            callable   : [$reflection->class, $reflection->name],
+            reflection : $reflection
+        ));
     }
 }

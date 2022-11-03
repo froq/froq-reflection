@@ -6,6 +6,7 @@
 namespace froq\reflection;
 
 use froq\reflection\internal\trait\{CallableTrait, ReferenceTrait};
+use froq\reflection\internal\reference\CallableReference;
 
 /**
  * An extended `ReflectionFunction` class.
@@ -28,12 +29,11 @@ class ReflectionFunction extends \ReflectionFunction
     {
         parent::__construct($function);
 
-        // Create internal reflection.
         $reflection = new \ReflectionFunction($function);
 
-        $this->setReference([
-            'callable'   => $function,
-            'reflection' => $reflection
-        ]);
+        $this->setReference(new CallableReference(
+            callable   : $function,
+            reflection : $reflection
+        ));
     }
 }

@@ -5,6 +5,9 @@
  */
 namespace froq\reflection\internal\trait;
 
+use froq\reflection\internal\reference\Reference;
+// use froq\util\Objects;
+
 /**
  * An internal trait, used by reflection classes to keep reference information
  * in place (eg: `name`, `names`, `nullable` for `ReflectionType`).
@@ -20,28 +23,31 @@ trait ReferenceTrait
     /**
      * Reference holder.
      *
-     * @var stdClass
+     * @var froq\reflection\internal\reference\Reference
      */
-    private readonly \stdClass $reference;
+    private readonly Reference $reference;
 
     /**
      * Set reference.
      *
-     * @param  array|stdClass $reference
+     * @param  froq\reflection\internal\reference\Reference $reference
      * @return void
      */
-    public final function setReference(array|\stdClass $reference): void
+    public function setReference(Reference $reference): void
     {
-        $this->reference = (object) $reference;
+        $this->reference = $reference;
     }
 
     /**
-     * Get reference (as clone so that to keep away from mutations).
+     * Get reference.
      *
-     * @return stdClass
+     * @return froq\reflection\internal\reference\Reference
      */
-    public final function getReference(): \stdClass
+    public function getReference(): Reference
     {
-        return clone $this->reference;
+        return $this->reference;
+
+        // // Should really do this (to keep away from mutations)?
+        // return Objects::clone($this->reference);
     }
 }

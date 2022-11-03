@@ -7,6 +7,9 @@ declare(strict_types=1);
 
 namespace froq\reflection;
 
+use froq\reflection\internal\trait\ReferenceTrait;
+use froq\reflection\internal\reference\TypeReference;
+
 /**
  * An reflection class, combines `ReflectionNamedType`, `ReflectionUnionType`
  * and `ReflectionIntersectionType` as one and adds some other utility methods.
@@ -18,7 +21,7 @@ namespace froq\reflection;
  */
 class ReflectionType extends \ReflectionType implements \Reflector
 {
-    use internal\trait\ReferenceTrait;
+    use ReferenceTrait;
 
     /**
      * Constructor.
@@ -59,11 +62,11 @@ class ReflectionType extends \ReflectionType implements \Reflector
             $nullable = true;
         }
 
-        $this->setReference([
-            'name'     => $name,
-            'names'    => $names,
-            'nullable' => $nullable
-        ]);
+        $this->setReference(new TypeReference(
+            name     : $name,
+            names    : $names,
+            nullable : $nullable
+        ));
     }
 
     /**

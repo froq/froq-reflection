@@ -26,11 +26,13 @@ use Set;
  */
 trait CallableTrait
 {
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __debugInfo(): array
     {
         if ($this->reference->reflection instanceof \ReflectionMethod) {
-            return ['name' => $this->reference->reflection->name,
+            return ['name'  => $this->reference->reflection->name,
                     'class' => $this->reference->reflection->class];
         }
         return ['name' => $this->reference->reflection->name];
@@ -39,30 +41,29 @@ trait CallableTrait
     /**
      * Get class.
      *
-     * @return string
-     * @throws ReflectionException
+     * @return string|null
      */
-    public function getClass(): string
+    public function getClass(): string|null
     {
         if ($this->reference->reflection instanceof \ReflectionMethod) {
             return $this->reference->reflection->class;
         }
 
-        throw new \ReflectionException(sprintf(
-            'Invalid call as %s::getClass()', $this::class
-        ));
+        return null;
     }
 
     /**
      * Get declaring class.
      *
-     * @return froq\reflection\{ReflectionClass|ReflectionTrait|ReflectionInterface}
-     * @throws ReflectionException
+     * @return froq\reflection\{ReflectionClass|ReflectionTrait|ReflectionInterface}|null
+     * @override ReflectionMethod.getDeclaringClass()
      */
-    public function getDeclaringClass(): ReflectionClass|ReflectionTrait|ReflectionInterface
+    #[\ReturnTypeWillChange]
+    public function getDeclaringClass(): ReflectionClass|ReflectionTrait|ReflectionInterface|null
     {
         if ($this->reference->reflection instanceof \ReflectionMethod) {
             $ref = $this->reference->reflection->getDeclaringClass();
+
             return match (true) {
                 default => new ReflectionClass($ref->name),
                 $ref->isTrait() => new ReflectionTrait($ref->name),
@@ -70,9 +71,7 @@ trait CallableTrait
             };
         }
 
-        throw new \ReflectionException(sprintf(
-            'Invalid call as %s::getDeclaringClass()', $this::class
-        ));
+        return null;
     }
 
     /**
@@ -314,12 +313,24 @@ trait CallableTrait
         return Reflection::getModifierNames($this->getModifiers());
     }
 
-    /** @override */
+    /**
+     * @override
+     */
     public function getReturnType(): ReflectionType|null
     {
         if ($type = $this->reference->reflection->getReturnType()) {
             return ReflectionType::from($type);
         }
         return null;
+    }
+
+    /**
+     * Get return types.
+     *
+     * @return array<froq\reflection\ReflectionType>
+     */
+    public function getReturnTypes(): array
+    {
+        return (array) $this->getReturnType()?->getTypes();
     }
 }

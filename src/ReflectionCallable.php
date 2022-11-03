@@ -6,6 +6,7 @@
 namespace froq\reflection;
 
 use froq\reflection\internal\trait\{CallableTrait, ReferenceTrait};
+use froq\reflection\internal\reference\CallableReference;
 
 /**
  * A reflection class, combines `ReflectionMethod` & `ReflectionFunction` as
@@ -44,14 +45,17 @@ class ReflectionCallable implements \Reflector
             $callable = $classOrObjectOrMethodOrCallable;
         }
 
-        // Create internal reflection.
-        $reflection = is_array($callable) ? new \ReflectionMethod(...$callable)
-                                          : new \ReflectionFunction($callable);
+        if (is_array($callable)) {
+            $reflection = new \ReflectionMethod(...$callable);
+            $callable   = [$reflection->class, $reflection->name];
+        } else {
+            $reflection = new \ReflectionFunction($callable);
+        }
 
-        $this->setReference([
-            'callable'   => $callable,
-            'reflection' => $reflection
-        ]);
+        $this->setReference(new CallableReference(
+            callable   : $callable,
+            reflection : $reflection
+        ));
     }
 
     /**
@@ -97,7 +101,9 @@ class ReflectionCallable implements \Reflector
         ));
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __toString(): string
     {
         return $this->reference->reflection->__toString();

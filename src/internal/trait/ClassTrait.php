@@ -26,10 +26,9 @@ use Set;
  */
 trait ClassTrait
 {
-    /** Class/object reference. */
-    public string|object $reference;
-
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __debugInfo(): array
     {
         return ['name' => $this->name];
@@ -48,13 +47,23 @@ trait ClassTrait
     }
 
     /**
+     * Check whether this is a clonable class (for typos).
+     *
+     * @return bool
+     */
+    public function isClonable(): bool
+    {
+        return $this->isCloneable();
+    }
+
+    /**
      * Get type.
      *
      * @return string
      */
     public function getType(): string
     {
-        return Objects::getType($this->reference);
+        return Objects::getType($this->reference->target);
     }
 
     /**
@@ -65,7 +74,7 @@ trait ClassTrait
      */
     public function getNamespace(bool $baseOnly = false): string
     {
-        return Objects::getNamespace($this->reference, $baseOnly);
+        return Objects::getNamespace($this->reference->target, $baseOnly);
     }
 
     /**
@@ -144,7 +153,7 @@ trait ClassTrait
      * Get parent class.
      *
      * @param  bool $baseOnly
-     * @return froq\reflection\ReflectionClass
+     * @return froq\reflection\ReflectionClass|null
      * @override
      */
     #[\ReturnTypeWillChange]
@@ -314,7 +323,7 @@ trait ClassTrait
      * Get method.
      *
      * @param  string $name
-     * @return froq\reflection\ReflectionMethod
+     * @return froq\reflection\ReflectionMethod|null
      * @override
      */
     #[\ReturnTypeWillChange]
@@ -371,7 +380,7 @@ trait ClassTrait
      * Get constant.
      *
      * @param  string $name
-     * @return array<mixed>
+     * @return froq\reflection\ReflectionClassConstant|null
      * @override
      */
     public function getConstant(string $name): ReflectionClassConstant|null
@@ -417,6 +426,10 @@ trait ClassTrait
     }
 
     /**
+     * Get reflection constant.
+     *
+     * @param  string $name
+     * @return froq\reflection\ReflectionClassConstant|null
      * @override
      */
     #[\ReturnTypeWillChange]
@@ -426,6 +439,10 @@ trait ClassTrait
     }
 
     /**
+     * Get reflection constants.
+     *
+     * @param  int|null $filter
+     * @return array<froq\reflection\ReflectionClassConstant>
      * @override
      */
     public function getReflectionConstants(int $filter = null): array
@@ -470,7 +487,7 @@ trait ClassTrait
      * Get property.
      *
      * @param  string $name
-     * @return froq\reflection\ReflectionProperty
+     * @return froq\reflection\ReflectionProperty|null
      * @override
      */
     #[\ReturnTypeWillChange]
@@ -482,7 +499,7 @@ trait ClassTrait
     /**
      * Get property.
      *
-     * @param  int $filter
+     * @param  int|null $filter
      * @return array<froq\reflection\ReflectionProperty>
      * @override
      */

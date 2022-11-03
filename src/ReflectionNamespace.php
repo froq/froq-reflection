@@ -28,20 +28,24 @@ class ReflectionNamespace implements \Reflector
      */
     public function __construct(string $name)
     {
-        if ($name !== '' && !preg_match('~^[a-z_][\w\\\]+$~i', $name)) {
+        if ($name !== '' && !preg_test('~^[a-zA-Z_][\w\\\]+$~', $name)) {
             throw new \ReflectionException(sprintf('Invalid namespace: "%s"', $name));
         }
 
         $this->name = trim($name, '\\');
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __debugInfo(): array
     {
         return ['name' => $this->name];
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __toString(): string
     {
         return sprintf('Namespace [ %s ]', $this->name);
@@ -209,6 +213,7 @@ class ReflectionNamespace implements \Reflector
     private function filterNames(array $names): array
     {
         $namespace = ltrim($this->name, '\\') . '\\';
+
         return array_filter_list($names, fn($name) => str_starts_with($name, $namespace));
     }
 
