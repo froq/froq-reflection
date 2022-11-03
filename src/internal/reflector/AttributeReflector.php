@@ -40,7 +40,7 @@ class AttributeReflector extends Reflector
     public function hasAttribute(string $name): bool
     {
         foreach ($this->collect() as $attribute) {
-            if ($attribute->getName() == $name) {
+            if ($attribute->getName() === $name) {
                 return true;
             }
         }
@@ -56,7 +56,7 @@ class AttributeReflector extends Reflector
     public function getAttribute(string $name): ReflectionAttribute|null
     {
         foreach ($this->collect() as $attribute) {
-            if ($attribute->getName() == $name) {
+            if ($attribute->getName() === $name) {
                 return $attribute;
             }
         }
@@ -78,6 +78,6 @@ class AttributeReflector extends Reflector
      */
     private function collect(): array
     {
-        return $this->ref->getAttributes();
+        return $this->reflector->getAttributes();
     }
 }

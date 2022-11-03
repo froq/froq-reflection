@@ -14,5 +14,5 @@ namespace froq\reflection\internal\reference;
  * @since   7.0
  * @internal
  */
-class Reference
+abstract class Reference
 {}

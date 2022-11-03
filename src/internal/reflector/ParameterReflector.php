@@ -116,7 +116,7 @@ class ParameterReflector extends Reflector
     {
         $ret = [];
 
-        foreach ($this->ref->getReference()->reflection->getParameters() as $parameter) {
+        foreach ($this->reflector->getReference()->reflection->getParameters() as $parameter) {
             $ret[] = $parameter->name;
         }
 
@@ -128,6 +128,6 @@ class ParameterReflector extends Reflector
      */
     private function convert(string $name): ReflectionParameter
     {
-        return new ReflectionParameter($this->ref->getReference()->callable, $name);
+        return new ReflectionParameter($this->reflector->getReference()->callable, $name);
     }
 }

@@ -66,7 +66,7 @@ class ParentReflector extends Reflector
      */
     public function getParentName(bool $baseOnly = false): string
     {
-        return (string) Objects::getParent($this->ref->name, $baseOnly);
+        return (string) Objects::getParent($this->reflector->name, $baseOnly);
     }
 
     /**
@@ -76,6 +76,6 @@ class ParentReflector extends Reflector
      */
     public function getParentNames(): array
     {
-        return (array) Objects::getParents($this->ref->name);
+        return (array) Objects::getParents($this->reflector->name);
     }
 }

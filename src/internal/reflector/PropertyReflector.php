@@ -63,7 +63,7 @@ class PropertyReflector extends Reflector
         // }
 
         // Can be declared in a super class.
-        if ($this->ref->name !== $this->getProperty($name)?->getDeclaringClass()->name) {
+        if ($this->reflector->name !== $this->getProperty($name)?->getDeclaringClass()->name) {
             return false;
         }
 
@@ -119,7 +119,7 @@ class PropertyReflector extends Reflector
     public function getPropertyValues(int $filter = null, bool $assoc = false): array
     {
         // Prevent "non-instantiated class" error.
-        $object = is_object($this->ref->getReference());
+        $object = is_object($this->reflector->getReference());
 
         $values = array_map(
             fn($name) => (
@@ -137,7 +137,7 @@ class PropertyReflector extends Reflector
      */
     private function collect(int $filter = null): array
     {
-        $reference = $this->ref->getReference();
+        $reference = $this->reflector->getReference();
 
         $ret = [];
         $ref = new \ReflectionClass($reference->target);
@@ -166,6 +166,6 @@ class PropertyReflector extends Reflector
      */
     private function convert(string $name): ReflectionProperty
     {
-        return new ReflectionProperty($this->ref->getReference()->target, $name);
+        return new ReflectionProperty($this->reflector->getReference()->target, $name);
     }
 }

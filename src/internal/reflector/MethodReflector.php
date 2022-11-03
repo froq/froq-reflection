@@ -46,7 +46,7 @@ class MethodReflector extends Reflector
         // }
 
         // Can be declared in a super class.
-        if ($this->ref->name !== $this->getMethod($name)?->getDeclaringClass()->name) {
+        if ($this->reflector->name !== $this->getMethod($name)?->getDeclaringClass()->name) {
             return false;
         }
 
@@ -95,7 +95,7 @@ class MethodReflector extends Reflector
      */
     private function collect(int $filter = null): array
     {
-        $ref = new \ReflectionClass($this->ref->name);
+        $ref = new \ReflectionClass($this->reflector->name);
 
         return $ref->getMethods($filter);
     }
@@ -105,6 +105,6 @@ class MethodReflector extends Reflector
      */
     private function convert(string $name): ReflectionMethod
     {
-        return new ReflectionMethod($this->ref->name, $name);
+        return new ReflectionMethod($this->reflector->name, $name);
     }
 }

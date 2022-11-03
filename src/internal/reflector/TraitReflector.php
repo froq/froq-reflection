@@ -82,28 +82,28 @@ class TraitReflector extends Reflector
     private function collect(): array
     {
 
-        if ($this->ref instanceof \ReflectionClass
-            || $this->ref instanceof \ReflectionObject) {
-            return Objects::getTraits($this->ref->name, all: true);
+        if ($this->reflector instanceof \ReflectionClass
+            || $this->reflector instanceof \ReflectionObject) {
+            return Objects::getTraits($this->reflector->name, all: true);
         }
 
         $ret = [];
 
-        if ($this->ref instanceof \ReflectionMethod
-            || $this->ref instanceof ReflectionCallable) {
+        if ($this->reflector instanceof \ReflectionMethod
+            || $this->reflector instanceof ReflectionCallable) {
             $ret = array_filter(
-                $this->ref->getDeclaringClass()->getTraits(),
+                $this->reflector->getDeclaringClass()->getTraits(),
                 fn($ref) => (
-                    $ref->hasMethod($this->ref->name) &&
-                    $ref->getMethod($this->ref->name)->class == $ref->name
+                    $ref->hasMethod($this->reflector->name) &&
+                    $ref->getMethod($this->reflector->name)->class == $ref->name
                 )
             );
-        } elseif ($this->ref instanceof \ReflectionProperty) {
+        } elseif ($this->reflector instanceof \ReflectionProperty) {
             $ret = array_filter(
-                $this->ref->getDeclaringClass()->getTraits(),
+                $this->reflector->getDeclaringClass()->getTraits(),
                 fn($ref) => (
-                    $ref->hasProperty($this->ref->name) &&
-                    $ref->getProperty($this->ref->name)->class == $ref->name
+                    $ref->hasProperty($this->reflector->name) &&
+                    $ref->getProperty($this->reflector->name)->class == $ref->name
                 )
             );
         }

@@ -41,7 +41,7 @@ class ClassConstantReflector extends Reflector
     public function hasOwnConstant(string $name): bool
     {
         // Can be declared in an interface or trait.
-        if ($this->ref->name !== $this->getConstant($name)?->getDeclaringClass()->name) {
+        if ($this->reflector->name !== $this->getConstant($name)?->getDeclaringClass()->name) {
             return false;
         }
 
@@ -102,7 +102,7 @@ class ClassConstantReflector extends Reflector
      */
     private function collect(int $filter = null): array
     {
-        $ref = new \ReflectionClass($this->ref->name);
+        $ref = new \ReflectionClass($this->reflector->name);
 
         return $ref->getConstants($filter);
     }
@@ -112,6 +112,6 @@ class ClassConstantReflector extends Reflector
      */
     private function convert(string $name): ReflectionClassConstant
     {
-        return new ReflectionClassConstant($this->ref->name, $name);
+        return new ReflectionClassConstant($this->reflector->name, $name);
     }
 }
