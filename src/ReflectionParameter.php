@@ -28,7 +28,8 @@ class ReflectionParameter extends \ReflectionParameter
      */
     public function __construct(string|array|object $functionOrMethod, int|string $nameOrPosition)
     {
-        if ( // When "Foo::bar" given as method.
+        if (
+            // When "Foo::bar" given as method.
             is_string($functionOrMethod)
             && preg_match('~(.+)::(\w+)~', $functionOrMethod, $match)
         ) {

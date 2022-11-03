@@ -29,7 +29,8 @@ class ReflectionClassConstant extends \ReflectionClassConstant
      */
     public function __construct(string|object $classOrObjectOrConstant, string $constant = null)
     {
-        if ( // When "Foo::BAR" given as single parameter.
+        if (
+            // When "Foo::BAR" given as single parameter.
             $constant === null
             && is_string($classOrObjectOrConstant)
             && preg_match('~(.+)::(\w+)~', $classOrObjectOrConstant, $match)
