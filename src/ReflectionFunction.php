@@ -5,7 +5,7 @@
  */
 namespace froq\reflection;
 
-use froq\reflection\internal\trait\{CallableTrait, ReferenceTrait};
+use froq\reflection\internal\trait\{ReferenceTrait, CallableTrait};
 use froq\reflection\internal\reference\CallableReference;
 
 /**
@@ -18,7 +18,7 @@ use froq\reflection\internal\reference\CallableReference;
  */
 class ReflectionFunction extends \ReflectionFunction
 {
-    use CallableTrait, ReferenceTrait;
+    use ReferenceTrait, CallableTrait;
 
     /**
      * Constructor.

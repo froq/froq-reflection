@@ -21,7 +21,7 @@ abstract class Reflector
      *
      * @var Reflector
      */
-    protected \Reflector $reflector;
+    protected readonly \Reflector $reflector;
 
     /**
      * Constructor.

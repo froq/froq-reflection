@@ -80,7 +80,6 @@ class TraitReflector extends Reflector
      */
     private function collect(): array
     {
-
         if ($this->reflector instanceof \ReflectionClass
             || $this->reflector instanceof \ReflectionObject) {
             return Objects::getTraits($this->reflector->name, all: true);
