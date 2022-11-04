@@ -6,7 +6,7 @@
 namespace froq\reflection\internal\reference;
 
 /**
- * Class reference holder.
+ * Class reference holder class.
  *
  * @package froq\reflection\internal\reference
  * @class   froq\reflection\internal\reference\ClassReference

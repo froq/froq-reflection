@@ -6,7 +6,7 @@
 namespace froq\reflection\internal\reference;
 
 /**
- * Property reference holder.
+ * Property reference holder class.
  *
  * @package froq\reflection\internal\reference
  * @class   froq\reflection\internal\reference\PropertyReference

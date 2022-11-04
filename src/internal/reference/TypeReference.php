@@ -6,7 +6,7 @@
 namespace froq\reflection\internal\reference;
 
 /**
- * Type reference holder.
+ * Type reference holder class.
  *
  * @package froq\reflection\internal\reference
  * @class   froq\reflection\internal\reference\TypeReference

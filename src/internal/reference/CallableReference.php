@@ -6,7 +6,7 @@
 namespace froq\reflection\internal\reference;
 
 /**
- * Callable reference holder.
+ * Callable reference holder class.
  *
  * @package froq\reflection\internal\reference
  * @class   froq\reflection\internal\reference\CallableReference

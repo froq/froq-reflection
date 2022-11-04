@@ -6,7 +6,7 @@
 namespace froq\reflection\internal\reference;
 
 /**
- * Parameter reference holder.
+ * Parameter reference holder class.
  *
  * @package froq\reflection\internal\reference
  * @class   froq\reflection\internal\reference\ParameterReference
