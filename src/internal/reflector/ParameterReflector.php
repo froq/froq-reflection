@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-reflection
  */
-declare(strict_types=1);
-
 namespace froq\reflection\internal\reflector;
 
 use froq\reflection\ReflectionParameter;
@@ -28,21 +26,19 @@ class ParameterReflector extends Reflector
      */
     public function parameters(): Set
     {
-        return (new Set($this->collect()))
-            ->map(fn($name) => $this->convert($name));
+        return new Set($this->getParameters());
     }
 
     /**
      * Check parameter existence.
      *
+     * @param  string|int $offset
      * @return bool
      */
     public function hasParameter(string|int $offset): bool
     {
-        foreach ($this->collect() as $position => $name) {
-            if ($offset == $name || $offset === $position) {
-                return true;
-            }
+        if ($this->collect([$offset])) {
+            return true;
         }
         return false;
     }
@@ -50,14 +46,13 @@ class ParameterReflector extends Reflector
     /**
      * Get parameter.
      *
+     * @param  string|int $offset
      * @return froq\reflection\ReflectionParameter|null
      */
     public function getParameter(string|int $offset): ReflectionParameter|null
     {
-        foreach ($this->collect() as $position => $name) {
-            if ($offset == $name || $offset === $position) {
-                return $this->convert($name);
-            }
+        if ($names = $this->collect([$offset])) {
+            return $this->convert($names[0]);
         }
         return null;
     }
@@ -65,22 +60,15 @@ class ParameterReflector extends Reflector
     /**
      * Get parameters.
      *
+     * @param  array<string|int>|null $offset
      * @return array<froq\reflection\ReflectionParameter>
      */
     public function getParameters(array $offsets = null): array
     {
-        $names = $this->collect();
-
-        if ($offsets) {
-            foreach ($names as $position => $name) {
-                if (!in_array($name, $offsets, true) &&
-                    !in_array($position, $offsets, true)) {
-                    unset($names[$position]);
-                }
-            }
-        }
-
-        return array_map([$this, 'convert'], array_values($names));
+        return array_apply(
+            $this->collect($offsets),
+            fn(string $name): ReflectionParameter => $this->convert($name),
+        );
     }
 
     /**
@@ -101,9 +89,9 @@ class ParameterReflector extends Reflector
      */
     public function getParameterValues(bool $assoc = false): array
     {
-        $values = array_map(
-            fn($name) => $this->convert($name)->getDefaultValue(),
-            $names = $this->collect()
+        $values = array_apply(
+            $names = $this->collect(),
+            fn(string $name): mixed => $this->convert($name)->getDefaultValue()
         );
 
         return $assoc ? array_combine($names, $values) : $values;
@@ -112,12 +100,22 @@ class ParameterReflector extends Reflector
     /**
      * Collect parameter names.
      */
-    private function collect(): array
+    private function collect(array $offsets = null): array
     {
         $ret = [];
 
         foreach ($this->reflector->getReference()->reflection->getParameters() as $parameter) {
             $ret[] = $parameter->name;
+        }
+
+        if ($offsets) {
+            foreach ($ret as $position => $name) {
+                if (!in_array($name, $offsets, true) &&
+                    !in_array($position, $offsets, true)) {
+                    unset($ret[$position]);
+                }
+            }
+            $ret = array_list($ret);
         }
 
         return $ret;

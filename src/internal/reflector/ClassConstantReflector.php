@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-reflection
  */
-declare(strict_types=1);
-
 namespace froq\reflection\internal\reflector;
 
 use froq\reflection\ReflectionClassConstant;
@@ -28,8 +26,7 @@ class ClassConstantReflector extends Reflector
      */
     public function constants(): Set
     {
-        return (new Set($this->getConstantNames()))
-            ->map(fn($name) => $this->convert($name));
+        return new Set($this->getConstants());
     }
 
     /**
@@ -44,7 +41,6 @@ class ClassConstantReflector extends Reflector
         if ($this->reflector->name !== $this->getConstant($name)?->getDeclaringClass()->name) {
             return false;
         }
-
         return true;
     }
 
@@ -71,7 +67,11 @@ class ClassConstantReflector extends Reflector
      */
     public function getConstants(int $filter = null): array
     {
-        return array_map([$this, 'convert'], $this->getConstantNames($filter));
+        return array_apply(
+            $this->collect($filter),
+            fn($_, string $name): ReflectionClassConstant => $this->convert($name),
+            list: true
+        );
     }
 
     /**

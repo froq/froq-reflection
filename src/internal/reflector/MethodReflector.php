@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-reflection
  */
-declare(strict_types=1);
-
 namespace froq\reflection\internal\reflector;
 
 use froq\reflection\ReflectionMethod;
@@ -28,8 +26,7 @@ class MethodReflector extends Reflector
      */
     public function methods(): Set
     {
-        return (new Set($this->collect()))
-            ->map(fn($ref) => $this->convert($ref->name));
+        return new Set($this->getMethods());
     }
 
     /**
@@ -76,7 +73,10 @@ class MethodReflector extends Reflector
      */
     public function getMethods(int $filter = null): array
     {
-        return array_map([$this, 'convert'], $this->getMethodNames($filter));
+        return array_apply(
+            $this->collect($filter),
+            fn(\ReflectionMethod $ref): ReflectionMethod => $this->convert($ref->name)
+        );
     }
 
     /**
@@ -87,7 +87,10 @@ class MethodReflector extends Reflector
      */
     public function getMethodNames(int $filter = null): array
     {
-        return array_map(fn($ref) => $ref->name, $this->collect($filter));
+        return array_apply(
+            $this->collect($filter),
+            fn(\ReflectionMethod $ref): string => $ref->name
+        );
     }
 
     /**

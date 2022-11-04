@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-reflection
  */
-declare(strict_types=1);
-
 namespace froq\reflection\internal\reflector;
 
 use froq\reflection\ReflectionProperty;
@@ -28,8 +26,7 @@ class PropertyReflector extends Reflector
      */
     public function properties(): Set
     {
-        return (new Set($this->collect()))
-            ->map(fn($name) => $this->convert($name));
+        return new Set($this->getProperties());
     }
 
     /**
@@ -95,7 +92,10 @@ class PropertyReflector extends Reflector
      */
     public function getProperties(int $filter = null): array
     {
-        return array_map([$this, 'convert'], $this->collect($filter));
+        return array_apply(
+            $this->collect($filter),
+            fn(string $name): ReflectionProperty => $this->convert($name)
+        );
     }
 
     /**
@@ -121,12 +121,12 @@ class PropertyReflector extends Reflector
         // Prevent "non-instantiated class" error.
         $object = is_object($this->reflector->getReference());
 
-        $values = array_map(
-            fn($name) => (
+        $values = array_apply(
+            $names = $this->collect($filter),
+            fn(string $name): mixed => (
                 $object ? $this->convert($name)->getValue()
                         : $this->convert($name)->getDefaultValue()
-            ),
-            $names = $this->collect($filter)
+            )
         );
 
         return $assoc ? array_combine($names, $values) : $values;
@@ -147,8 +147,8 @@ class PropertyReflector extends Reflector
         }
 
         // If no public vanted, skip dynamics.
-        if ($filter && !($filter & ReflectionProperty::IS_PUBLIC)) {
-            return array_values($ret);
+        if ($filter && !($filter & \ReflectionProperty::IS_PUBLIC)) {
+            return array_list($ret);
         }
 
         // Dynamic properties.
@@ -158,7 +158,7 @@ class PropertyReflector extends Reflector
             }
         }
 
-        return array_values($ret);
+        return array_list($ret);
     }
 
     /**

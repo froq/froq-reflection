@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-reflection
  */
-declare(strict_types=1);
-
 namespace froq\reflection\internal\reflector;
 
 use froq\reflection\{ReflectionTrait, ReflectionCallable};
@@ -29,8 +27,7 @@ class TraitReflector extends Reflector
      */
     public function traits(): Set
     {
-        return (new Set($this->getTraitNames()))
-            ->map(fn($name) => new ReflectionTrait($name));
+        return new Set($this->getTraits());
     }
 
     /**
@@ -45,7 +42,7 @@ class TraitReflector extends Reflector
         $name ??= end($names); // For non-class reflections.
 
         if ($name && in_array($name, $names, true)) {
-            return new ReflectionTrait($name);
+            return $this->convert($name);
         }
         return null;
     }
@@ -57,9 +54,10 @@ class TraitReflector extends Reflector
      */
     public function getTraits(): array
     {
-        return array_map(
-            fn($item) => is_string($item) ? new ReflectionTrait($item) : $item,
-            $this->collect()
+        return array_apply(
+            $this->collect(),
+            fn(string|ReflectionTrait $item): ReflectionTrait
+                => is_string($item) ? $this->convert($item) : $item,
         );
     }
 
@@ -70,9 +68,10 @@ class TraitReflector extends Reflector
      */
     public function getTraitNames(): array
     {
-        return array_map(
-            fn($item) => is_string($item) ? $item : $item->name,
-            $this->collect()
+        return array_apply(
+            $this->collect(),
+            fn(string|ReflectionTrait $item): string
+                => is_string($item) ? $item : $item->name
         );
     }
 
@@ -93,21 +92,29 @@ class TraitReflector extends Reflector
             || $this->reflector instanceof ReflectionCallable) {
             $ret = array_filter(
                 $this->reflector->getDeclaringClass()->getTraits(),
-                fn($ref) => (
+                fn(ReflectionTrait $ref): bool => (
                     $ref->hasMethod($this->reflector->name) &&
-                    $ref->getMethod($this->reflector->name)->class == $ref->name
+                    $ref->getMethod($this->reflector->name)->class === $ref->name
                 )
             );
         } elseif ($this->reflector instanceof \ReflectionProperty) {
             $ret = array_filter(
                 $this->reflector->getDeclaringClass()->getTraits(),
-                fn($ref) => (
+                fn(ReflectionTrait $ref): bool => (
                     $ref->hasProperty($this->reflector->name) &&
-                    $ref->getProperty($this->reflector->name)->class == $ref->name
+                    $ref->getProperty($this->reflector->name)->class === $ref->name
                 )
             );
         }
 
-        return array_values($ret);
+        return array_list($ret);
+    }
+
+    /**
+     * Convert traits to instances.
+     */
+    private function convert(string $name): ReflectionTrait
+    {
+        return new ReflectionTrait($name);
     }
 }

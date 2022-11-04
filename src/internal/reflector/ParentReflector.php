@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-reflection
  */
-declare(strict_types=1);
-
 namespace froq\reflection\internal\reflector;
 
 use froq\reflection\ReflectionClass;
@@ -29,8 +27,7 @@ class ParentReflector extends Reflector
      */
     public function parents(): Set
     {
-        return (new Set($this->getParentNames()))
-            ->map(fn($name) => new ReflectionClass($name));
+        return new Set($this->getParents());
     }
 
     /**
@@ -41,9 +38,10 @@ class ParentReflector extends Reflector
      */
     public function getParent(bool $baseOnly = false): ReflectionClass|null
     {
-        $ret = $this->getParentName($baseOnly);
-
-        return $ret ? new ReflectionClass($ret) : null;
+        if ($name = $this->getParentName($baseOnly)) {
+            return $this->convert($name);
+        }
+        return null;
     }
 
     /**
@@ -53,9 +51,10 @@ class ParentReflector extends Reflector
      */
     public function getParents(): array
     {
-        $ret = $this->getParentNames();
-
-        return $ret ? array_map(fn($name) => new ReflectionClass($name), $ret) : $ret;
+        return array_apply(
+            $this->getParentNames(),
+            fn(string $name): ReflectionClass => $this->convert($name)
+        );
     }
 
     /**
@@ -77,5 +76,13 @@ class ParentReflector extends Reflector
     public function getParentNames(): array
     {
         return (array) Objects::getParents($this->reflector->name);
+    }
+
+    /**
+     * Convert parents to instances.
+     */
+    private function convert(string $name): ReflectionClass
+    {
+        return new ReflectionClass($name);
     }
 }
