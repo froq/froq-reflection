@@ -15,7 +15,7 @@ use froq\reflection\internal\reference\Reference;
  * @package froq\reflection\internal\trait
  * @class   froq\reflection\internal\trait\ReferenceTrait
  * @author  Kerem Güneş
- * @since   6.2
+ * @since   7.0
  * @internal
  */
 trait ReferenceTrait
