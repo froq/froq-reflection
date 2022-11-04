@@ -540,4 +540,74 @@ trait ClassTrait
     {
         return (new PropertyReflector($this))->getPropertyValues($filter, $assoc);
     }
+
+    /**
+     * Check for an implementing interface.
+     *
+     * @param  string|ReflectionClass $interface
+     * @param  bool                   $check
+     * @return bool
+     * @throws ReflectionException
+     * @override
+     */
+    public function implementsInterface(string|\ReflectionClass $interface, bool $check = false): bool
+    {
+        try {
+            return parent::implementsInterface($interface);
+        } catch (\ReflectionException $e) {
+            $check && throw $e;
+            return false;
+        }
+    }
+
+    /**
+     * Check for a using trait.
+     *
+     * @param  string|ReflectionClass $trait
+     * @param  bool                   $check
+     * @return bool
+     * @throws ReflectionException
+     * @missing
+     */
+    public function usesTrait(string|\ReflectionClass $trait, bool $check = false): bool
+    {
+        $name = is_string($trait) ? $trait : $trait->name;
+
+        if ($check && !trait_exists($name)) {
+            $message = match (true) {
+                default => 'Trait "%s" does not exist',
+                class_exists($name) => '%s is not a trait, it is a class',
+                interface_exists($name) => '%s is not a trait, it is an interface',
+            };
+
+            throw new \ReflectionException(sprintf($message, $name));
+        }
+
+        return in_array($name, $this->getTraitNames(), true);
+    }
+
+    /**
+     * Check for an extending a class.
+     *
+     * @param  string|ReflectionClass $trait
+     * @param  bool                   $check
+     * @return bool
+     * @throws ReflectionException
+     */
+    public function extendsClass(string|\ReflectionClass $class, bool $check = false): bool
+    {
+        $name = is_string($class) ? $class : $class->name;
+
+        if ($check && !class_exists($name)) {
+            $message = match (true) {
+                default => 'Class "%s" does not exist',
+                trait_exists($name) => '%s is not a class, it is a trait',
+                interface_exists($name) => '%s is not a class, it is an interface',
+            };
+
+            throw new \ReflectionException(sprintf($message, $name));
+        }
+
+        return in_array($name, $this->getParentNames(), true);
+    }
 }
