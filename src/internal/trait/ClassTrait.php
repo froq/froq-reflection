@@ -108,6 +108,16 @@ trait ClassTrait
     }
 
     /**
+     * Has parent (for classes & interfaces).
+     *
+     * @return bool
+     */
+    public function hasParent(): bool
+    {
+        return (new ParentReflector($this))->hasParent();
+    }
+
+    /**
      * Get parent.
      *
      * @param  bool $baseOnly
@@ -132,9 +142,9 @@ trait ClassTrait
      * Get parent name.
      *
      * @param  bool $baseOnly
-     * @return string
+     * @return string|null
      */
-    public function getParentName(bool $baseOnly = false): string
+    public function getParentName(bool $baseOnly = false): string|null
     {
         return (new ParentReflector($this))->getParentName($baseOnly);
     }

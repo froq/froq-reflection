@@ -31,6 +31,19 @@ class ParentReflector extends Reflector
     }
 
     /**
+     * Check parent existence.
+     *
+     * @return bool
+     */
+    public function hasParent(): bool
+    {
+        if ($this->getParentName()) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Get parent.
      *
      * @param  bool $baseOnly
@@ -61,11 +74,19 @@ class ParentReflector extends Reflector
      * Get parent name.
      *
      * @param  bool $baseOnly
-     * @return string
+     * @return string|null
      */
-    public function getParentName(bool $baseOnly = false): string
+    public function getParentName(bool $baseOnly = false): string|null
     {
-        return (string) Objects::getParent($this->reflector->name, $baseOnly);
+        $name = Objects::getParent($this->reflector->name, $baseOnly);
+
+        // Since get_parent_class() doesn't provide.
+        if (!$name && $this->reflector->isInterface()) {
+            $names = class_implements($this->reflector->name);
+            $names && $name = $baseOnly ? array_last($names) : array_first($names);
+        }
+
+        return $name;
     }
 
     /**
@@ -75,7 +96,15 @@ class ParentReflector extends Reflector
      */
     public function getParentNames(): array
     {
-        return (array) Objects::getParents($this->reflector->name);
+        $names = Objects::getParents($this->reflector->name);
+
+        // Since get_parent_class() doesn't provide.
+        if (!$names && $this->reflector->isInterface()) {
+            $names = class_implements($this->reflector->name);
+            $names && $names = array_list($names);
+        }
+
+        return $names;
     }
 
     /**
