@@ -6,7 +6,7 @@
 namespace froq\reflection;
 
 /**
- * A namespace reflection class.
+ * Namespace reflection class.
  *
  * @package froq\reflection
  * @object  froq\reflection\ReflectionNamespace
