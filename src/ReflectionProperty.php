@@ -168,12 +168,13 @@ class ReflectionProperty extends \ReflectionProperty
     }
 
     /**
+     * @throws ReflectionException
      * @override
      */
     public function setValue(mixed $object, mixed $value = null): void
     {
         // Swap for value-only calls.
-        if (func_num_args() == 1) {
+        if (func_num_args() === 1) {
             [$value, $object] = [$object, null];
         }
 
@@ -193,6 +194,7 @@ class ReflectionProperty extends \ReflectionProperty
     }
 
     /**
+     * @throws ReflectionException
      * @override
      */
     public function getValue(object $object = null): mixed
