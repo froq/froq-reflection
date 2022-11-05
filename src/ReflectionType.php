@@ -7,6 +7,7 @@ namespace froq\reflection;
 
 use froq\reflection\internal\trait\ReferenceTrait;
 use froq\reflection\internal\reference\TypeReference;
+use froq\util\Objects;
 
 /**
  * An reflection class, combines `ReflectionNamedType`, `ReflectionUnionType`
@@ -127,7 +128,17 @@ class ReflectionType extends \ReflectionType implements \Reflector
      */
     public function getPureName(): string|null
     {
-        return $this->isNamed() ? $this->reference->names->first() : null;
+        return $this->isNamed() ? $this->reference->names[0] : null;
+    }
+
+    /**
+     * Get short name if class (without "namespace" part).
+     *
+     * @return string|null
+     */
+    public function getShortName(): string|null
+    {
+        return $this->isClass() ? Objects::getShortName($this->reference->names[0]) : null;
     }
 
     /**
