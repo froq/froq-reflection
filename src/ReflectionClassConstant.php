@@ -159,4 +159,44 @@ class ReflectionClassConstant extends \ReflectionClassConstant
     {
         return (new InterfaceReflector($this))->getInterfaceNames();
     }
+
+    /**
+     * Get type.
+     *
+     * @return froq\reflection\ReflectionType
+     */
+    public function getType(): ReflectionType
+    {
+        return ReflectionType::of($this->getValue());
+    }
+
+    /**
+     * Get types.
+     *
+     * @return array<froq\reflection\ReflectionType>
+     */
+    public function getTypes(): array
+    {
+        return (array) $this->getType()?->getTypes();
+    }
+
+    /**
+     * Get visibility.
+     *
+     * @return string
+     */
+    public function getVisibility(): string
+    {
+        return Reflection::getVisibility($this);
+    }
+
+    /**
+     * Get modifier names.
+     *
+     * @return array<string>
+     */
+    public function getModifierNames(): array
+    {
+        return Reflection::getModifierNames($this->getModifiers());
+    }
 }
