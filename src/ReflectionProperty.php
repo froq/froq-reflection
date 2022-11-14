@@ -231,6 +231,16 @@ class ReflectionProperty extends \ReflectionProperty
     }
 
     /**
+     * Get types.
+     *
+     * @return array<froq\reflection\ReflectionType>
+     */
+    public function getTypes(): array
+    {
+        return (array) $this->getType()?->getTypes();
+    }
+
+    /**
      * Get visibility.
      *
      * @return string
