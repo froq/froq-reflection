@@ -27,10 +27,21 @@ class ReflectionProperty extends \ReflectionProperty
      * Constructor.
      *
      * @param string|object $target
-     * @param string        $name
+     * @param string|null   $property
      */
-    public function __construct(string|object $target, string $name)
+    public function __construct(string|object $classOrObjectOrProperty, string $property = null)
     {
+        if (
+            // When "Foo::bar" given as single parameter.
+            func_num_args() === 1
+            && is_string($classOrObjectOrProperty)
+            && preg_match('~(.+)::(\w+)~', $classOrObjectOrProperty, $match)
+        ) {
+            [$target, $name] = array_slice($match, 1);
+        } else {
+            [$target, $name] = [$classOrObjectOrProperty, $property];
+        }
+
         parent::__construct($target, $name);
 
         $this->setReference(new PropertyReference(
