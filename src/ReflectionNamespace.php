@@ -220,6 +220,6 @@ class ReflectionNamespace implements \Reflector
      */
     private function mapNames(array $names, string $class): array
     {
-        return array_map(fn($name) => new $class($name), $names);
+        return array_apply($names, fn($name) => new $class($name));
     }
 }
