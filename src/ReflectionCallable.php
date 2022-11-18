@@ -31,8 +31,7 @@ class ReflectionCallable implements \Reflector
     {
         if (
             // When "Foo::bar" given as single parameter.
-            $method === null
-            && is_string($classOrObjectOrMethodOrCallable)
+            func_num_args() === 1 && is_string($classOrObjectOrMethodOrCallable)
             && preg_match('~(.+)::(\w+)~', $classOrObjectOrMethodOrCallable, $match)
         ) {
             $callable = array_slice($match, 1);

@@ -32,8 +32,7 @@ class ReflectionClassConstant extends \ReflectionClassConstant
     {
         if (
             // When "Foo::BAR" given as single parameter.
-            $constant === null
-            && is_string($classOrObjectOrConstant)
+            func_num_args() === 1 && is_string($classOrObjectOrConstant)
             && preg_match('~(.+)::(\w+)~', $classOrObjectOrConstant, $match)
         ) {
             [$classOrObjectOrConstant, $constant] = array_slice($match, 1);
