@@ -23,7 +23,7 @@ class CallableDocument extends Document
      * @param  int $index
      * @return ParamTag|null
      */
-    public function getParamater(int $index): ParamTag|null
+    public function getParameter(int $index): ParamTag|null
     {
         return $this->getTag('param')[$index] ?? null;
     }
@@ -33,7 +33,7 @@ class CallableDocument extends Document
      *
      * @return ParamTag[|null
      */
-    public function getParamaters(): array|null
+    public function getParameters(): array|null
     {
         return $this->getTag('param');
     }
