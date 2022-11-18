@@ -56,6 +56,7 @@ trait DocumentTrait
      * Get document description.
      *
      * @return string|null
+     * @causes Error
      */
     public function getDocumentDescription(): string|null
     {

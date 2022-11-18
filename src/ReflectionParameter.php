@@ -5,7 +5,7 @@
  */
 namespace froq\reflection;
 
-use froq\reflection\internal\trait\{DocumentTrait, ReferenceTrait};
+use froq\reflection\internal\trait\ReferenceTrait;
 use froq\reflection\internal\reference\ParameterReference;
 
 /**
@@ -18,7 +18,7 @@ use froq\reflection\internal\reference\ParameterReference;
  */
 class ReflectionParameter extends \ReflectionParameter
 {
-    use DocumentTrait, ReferenceTrait;
+    use ReferenceTrait;
 
     /**
      * Constructor.
