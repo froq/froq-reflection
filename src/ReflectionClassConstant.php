@@ -5,6 +5,7 @@
  */
 namespace froq\reflection;
 
+use froq\reflection\internal\trait\DocumentTrait;
 use froq\reflection\internal\reflector\{AttributeReflector, InterfaceReflector};
 use ReflectionAttribute;
 use Set;
@@ -19,6 +20,8 @@ use Set;
  */
 class ReflectionClassConstant extends \ReflectionClassConstant
 {
+    use DocumentTrait;
+
     /**
      * Constructor.
      *

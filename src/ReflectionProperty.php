@@ -5,7 +5,7 @@
  */
 namespace froq\reflection;
 
-use froq\reflection\internal\trait\ReferenceTrait;
+use froq\reflection\internal\trait\{DocumentTrait, ReferenceTrait};
 use froq\reflection\internal\reference\PropertyReference;
 use froq\reflection\internal\reflector\{AttributeReflector, TraitReflector};
 use ReflectionAttribute;
@@ -21,7 +21,7 @@ use Set;
  */
 class ReflectionProperty extends \ReflectionProperty
 {
-    use ReferenceTrait;
+    use DocumentTrait, ReferenceTrait;
 
     /**
      * Constructor.

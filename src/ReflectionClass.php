@@ -5,7 +5,7 @@
  */
 namespace froq\reflection;
 
-use froq\reflection\internal\trait\{ReferenceTrait, ClassTrait};
+use froq\reflection\internal\trait\{DocumentTrait, ReferenceTrait, ClassTrait};
 use froq\reflection\internal\reference\ClassReference;
 
 /**
@@ -18,7 +18,7 @@ use froq\reflection\internal\reference\ClassReference;
  */
 class ReflectionClass extends \ReflectionClass
 {
-    use ReferenceTrait, ClassTrait;
+    use DocumentTrait, ReferenceTrait, ClassTrait;
 
     /**
      * Constructor.
