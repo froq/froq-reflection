@@ -32,9 +32,9 @@ class ReflectionMethod extends \ReflectionMethod
 
         $reflection = new \ReflectionMethod($classOrObjectOrMethod, $method);
 
-        $this->setReference(new CallableReference(
+        $this->reference = new CallableReference(
             callable   : [$reflection->class, $reflection->name],
             reflection : $reflection
-        ));
+        );
     }
 }

@@ -29,8 +29,8 @@ class ReflectionObject extends \ReflectionObject
     {
         parent::__construct($target);
 
-        $this->setReference(new ClassReference(
+        $this->reference = new ClassReference(
             target : $target
-        ));
+        );
     }
 }

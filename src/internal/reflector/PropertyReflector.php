@@ -119,7 +119,7 @@ class PropertyReflector extends Reflector
     public function getPropertyValues(int $filter = null, bool $assoc = false): array
     {
         // Prevent "non-instantiated class" error.
-        $object = is_object($this->reflector->getReference());
+        $object = is_object($this->reflector->reference);
 
         $values = array_apply(
             $names = $this->collect($filter),
@@ -137,10 +137,8 @@ class PropertyReflector extends Reflector
      */
     private function collect(int $filter = null): array
     {
-        $reference = $this->reflector->getReference();
-
         $ret = [];
-        $ref = new \ReflectionClass($reference->target);
+        $ref = new \ReflectionClass($this->reflector->reference->target);
 
         foreach ($ref->getProperties($filter) as $property) {
             $ret[$property->name] = $property->name;
@@ -152,8 +150,8 @@ class PropertyReflector extends Reflector
         }
 
         // Dynamic properties.
-        if (is_object($reference->target)) {
-            foreach (array_keys(get_object_vars($reference->target)) as $var) {
+        if (is_object($this->reflector->reference->target)) {
+            foreach (array_keys(get_object_vars($this->reflector->reference->target)) as $var) {
                 array_key_exists($var, $ret) || $ret[$var] = $var;
             }
         }
@@ -166,6 +164,6 @@ class PropertyReflector extends Reflector
      */
     private function convert(string $name): ReflectionProperty
     {
-        return new ReflectionProperty($this->reflector->getReference()->target, $name);
+        return new ReflectionProperty($this->reflector->reference->target, $name);
     }
 }

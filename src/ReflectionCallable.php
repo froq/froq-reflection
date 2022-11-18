@@ -55,10 +55,10 @@ class ReflectionCallable implements \Reflector
             $reflection = new \ReflectionFunction($callable);
         }
 
-        $this->setReference(new CallableReference(
+        $this->reference = new CallableReference(
             callable   : $callable,
             reflection : $reflection
-        ));
+        );
     }
 
     /**

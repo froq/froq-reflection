@@ -6,7 +6,6 @@
 namespace froq\reflection\internal\trait;
 
 use froq\reflection\internal\reference\Reference;
-// use froq\util\Objects;
 
 /**
  * An internal trait, used by reflection classes to keep reference information
@@ -25,29 +24,5 @@ trait ReferenceTrait
      *
      * @var froq\reflection\internal\reference\Reference
      */
-    private readonly Reference $reference;
-
-    /**
-     * Set reference.
-     *
-     * @param  froq\reflection\internal\reference\Reference $reference
-     * @return void
-     */
-    public function setReference(Reference $reference): void
-    {
-        $this->reference = $reference;
-    }
-
-    /**
-     * Get reference.
-     *
-     * @return froq\reflection\internal\reference\Reference
-     */
-    public function getReference(): Reference
-    {
-        return $this->reference;
-
-        // // Should really do this (to keep away from mutations)?
-        // return Objects::clone($this->reference);
-    }
+    public readonly Reference $reference;
 }

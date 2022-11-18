@@ -38,9 +38,9 @@ class ReflectionParameter extends \ReflectionParameter
 
         parent::__construct($functionOrMethod, $nameOrPosition);
 
-        $this->setReference(new ParameterReference(
+        $this->reference = new ParameterReference(
             callable : $functionOrMethod
-        ));
+        );
     }
 
     /**

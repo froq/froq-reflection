@@ -31,9 +31,9 @@ class ReflectionFunction extends \ReflectionFunction
 
         $reflection = new \ReflectionFunction($function);
 
-        $this->setReference(new CallableReference(
+        $this->reference = new CallableReference(
             callable   : $function,
             reflection : $reflection
-        ));
+        );
     }
 }

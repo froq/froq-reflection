@@ -61,11 +61,11 @@ class ReflectionType extends \ReflectionType implements \Reflector
             $nullable = true;
         }
 
-        $this->setReference(new TypeReference(
+        $this->reference = new TypeReference(
             name     : $name,
             names    : $names,
             nullable : $nullable
-        ));
+        );
     }
 
     /**

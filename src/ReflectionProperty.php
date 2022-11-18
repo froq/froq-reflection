@@ -43,10 +43,10 @@ class ReflectionProperty extends \ReflectionProperty
 
         parent::__construct($target, $name);
 
-        $this->setReference(new PropertyReference(
+        $this->reference = new PropertyReference(
             target : $target,
             name   : $name
-        ));
+        );
     }
 
     /**
