@@ -333,15 +333,16 @@ class ReflectionType extends \ReflectionType implements \Reflector
     /**
      * Static initializer for ReflectionType types.
      *
-     * @param  ReflectionType $type
+     * @param  string|ReflectionType $type
      * @return froq\reflection\ReflectionType
      */
-    public static function from(\ReflectionType $type): ReflectionType
+    public static function from(string|\ReflectionType $type): ReflectionType
     {
         return new ReflectionType(
             ($type instanceof \ReflectionNamedType)
                 ? $type->getName() : (string) $type,
-            $type->allowsNull()
+            ($type instanceof \ReflectionType)
+                && $type->allowsNull()
         );
     }
 }
