@@ -8,6 +8,7 @@ namespace froq\reflection;
 use froq\reflection\internal\trait\ReferenceTrait;
 use froq\reflection\internal\reference\TypeReference;
 use froq\util\Objects;
+use RegExp;
 
 /**
  * An reflection class, combines `ReflectionNamedType`, `ReflectionUnionType`
@@ -210,9 +211,11 @@ class ReflectionType extends \ReflectionType implements \Reflector
      */
     public function isBuiltin(): bool
     {
-        return $this->reference->name->test(
-            '~^(int|float|string|bool|array|object|callable|iterable|mixed|true|false|null)(\|null)?$~'
+        static $reBuiltin = new RegExp(
+            '^(int|float|string|bool|array|object|callable|iterable|mixed|true|false|null)(\|null)?$'
         );
+
+        return $this->reference->name->test($reBuiltin);
     }
 
     /**
@@ -222,9 +225,11 @@ class ReflectionType extends \ReflectionType implements \Reflector
      */
     public function isCastable(): bool
     {
-        return $this->reference->name->test(
-            '~^(int|float|string|bool|array|object|null)$~'
+        static $reCastable = new RegExp(
+            '^(int|float|string|bool|array|object|null)$'
         );
+
+        return $this->reference->name->test($reCastable);
     }
 
     /**
