@@ -211,11 +211,11 @@ class ReflectionType extends \ReflectionType implements \Reflector
      */
     public function isBuiltin(): bool
     {
-        static $reBuiltin = new RegExp(
+        static $re = new RegExp(
             '^(int|float|string|bool|array|object|callable|iterable|mixed|true|false|null)(\|null)?$'
         );
 
-        return $this->reference->name->test($reBuiltin);
+        return $this->reference->name->test($re);
     }
 
     /**
@@ -225,11 +225,11 @@ class ReflectionType extends \ReflectionType implements \Reflector
      */
     public function isCastable(): bool
     {
-        static $reCastable = new RegExp(
+        static $re = new RegExp(
             '^(int|float|string|bool|array|object|null)$'
         );
 
-        return $this->reference->name->test($reCastable);
+        return $this->reference->name->test($re);
     }
 
     /**
