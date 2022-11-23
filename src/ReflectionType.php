@@ -308,23 +308,25 @@ class ReflectionType extends \ReflectionType implements \Reflector
     /**
      * Check whether type equals to given type.
      *
-     * @param  string $name
+     * @param  string|array<string> $name
+     * @param  bool                 $icase
      * @return bool
      */
-    public function equals(string $name): bool
+    public function equals(string|array $name, bool $icase = false): bool
     {
-        return $this->reference->name->equals($name);
+        return $this->reference->name->equals($name, $icase);
     }
 
     /**
      * Check whether contains given names.
      *
-     * @param  string ...$names
+     * @param  string|array<string> $name
+     * @param  bool                 $icase
      * @return bool
      */
-    public function contains(string ...$names): bool
+    public function contains(string|array $name, bool $icase = false): bool
     {
-        return $this->reference->names->contains(...$names);
+        return $this->reference->names->contains($name, $icase);
     }
 
     /**
