@@ -32,9 +32,12 @@ class ReflectionType extends \ReflectionType implements \Reflector
      */
     public function __construct(string $name, bool $nullable = false)
     {
-        $name || throw new \ReflectionException('No name given');
+        $name = trim($name);
+        if ($name === '') {
+            throw new \ReflectionException('Invalid name');
+        }
 
-        $name = xstring($name);
+        $name = xstring($name)->trim('\\');
 
         // Null/mixed is nullable.
         if ($name->equals(['null', 'mixed'], icase: true)) {
