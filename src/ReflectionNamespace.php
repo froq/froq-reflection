@@ -212,7 +212,7 @@ class ReflectionNamespace implements \Reflector
     {
         $namespace = ltrim($this->name, '\\') . '\\';
 
-        return array_filter_list($names, fn($name) => str_starts_with($name, $namespace));
+        return array_filter_list($names, fn(string $name): bool => str_starts_with($name, $namespace));
     }
 
     /**
@@ -220,6 +220,6 @@ class ReflectionNamespace implements \Reflector
      */
     private function mapNames(array $names, string $class): array
     {
-        return array_apply($names, fn($name) => new $class($name));
+        return array_apply($names, fn(string $name): \Reflector => new $class($name));
     }
 }
