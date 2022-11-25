@@ -5,7 +5,7 @@
  */
 namespace froq\reflection\internal\reflector;
 
-use ReflectionAttribute;
+use froq\reflection\{ReflectionAttribute, ReflectionCallable};
 use Set;
 
 /**
@@ -22,11 +22,11 @@ class AttributeReflector extends Reflector
     /**
      * Set of attributes.
      *
-     * @return Set<ReflectionAttribute>
+     * @return Set<froq\reflection\ReflectionAttribute>
      */
     public function attributes(): Set
     {
-        return new Set($this->collect());
+        return new Set($this->getAttributes());
     }
 
     /**
@@ -49,16 +49,31 @@ class AttributeReflector extends Reflector
      * Get attribute.
      *
      * @param  string $name
-     * @return ReflectionAttribute|null
+     * @return froq\reflection\ReflectionAttribute|null
      */
     public function getAttribute(string $name): ReflectionAttribute|null
     {
         foreach ($this->collect() as $attribute) {
             if ($attribute->getName() === $name) {
-                return $attribute;
+                return $this->convert($attribute);
             }
         }
         return null;
+    }
+
+    /**
+     * Get attributes.
+     *
+     * @param  string|null $name
+     * @param  int|null    $flags
+     * @return array<froq\reflection\ReflectionAttribute>
+     */
+    public function getAttributes(string $name = null, int $flags = null): array
+    {
+        return array_apply(
+            $this->collect(),
+            fn(\ReflectionAttribute $ref): ReflectionAttribute => $this->convert($ref)
+        );
     }
 
     /**
@@ -70,15 +85,40 @@ class AttributeReflector extends Reflector
     {
         return array_apply(
             $this->collect(),
-            fn(ReflectionAttribute $ref): string => $ref->getName()
+            fn(\ReflectionAttribute $ref): string => $ref->getName()
         );
     }
 
     /**
      * Collect attributes.
      */
-    private function collect(): array
+    private function collect(string $name = null, int $flags = null): array
     {
-        return $this->reflector->getAttributes();
+        $ref = match (true) {
+            $this->reflector instanceof \ReflectionClass
+                => new \ReflectionClass($this->reflector->name),
+            $this->reflector instanceof \ReflectionClassConstant
+                => new \ReflectionClassConstant($this->reflector->class, $this->reflector->name),
+            $this->reflector instanceof \ReflectionProperty
+                => new \ReflectionProperty($this->reflector->class, $this->reflector->name),
+            $this->reflector instanceof \ReflectionMethod,
+            $this->reflector instanceof \ReflectionFunction,
+            $this->reflector instanceof ReflectionCallable
+                => $this->reflector->reference->reflection,
+            default
+                => null
+        };
+
+        return $ref ? $ref->getAttributes($name, (int) $flags) : [];
+    }
+
+
+
+    /**
+     * Convert attributes to instances.
+     */
+    private function convert(\ReflectionAttribute $attribute): ReflectionAttribute
+    {
+        return new ReflectionAttribute($attribute);
     }
 }

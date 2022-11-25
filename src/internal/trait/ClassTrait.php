@@ -6,11 +6,10 @@
 namespace froq\reflection\internal\trait;
 
 use froq\reflection\{Reflection, ReflectionClass, ReflectionClassConstant, ReflectionProperty, ReflectionMethod,
-    ReflectionInterface, ReflectionTrait, ReflectionNamespace};
+    ReflectionInterface, ReflectionTrait, ReflectionAttribute, ReflectionNamespace};
 use froq\reflection\internal\reflector\{AttributeReflector, InterfaceReflector, TraitReflector,
     ParentReflector, ClassConstantReflector, PropertyReflector, MethodReflector};
 use froq\util\Objects;
-use ReflectionAttribute;
 use Set;
 
 /**
@@ -181,7 +180,7 @@ trait ClassTrait
     /**
      * Set of attributes.
      *
-     * @return Set<ReflectionAttribute>
+     * @return Set<froq\reflection\ReflectionAttribute>
      */
     public function attributes(): Set
     {
@@ -203,11 +202,24 @@ trait ClassTrait
      * Get attribute.
      *
      * @param  string $name
-     * @return ReflectionAttribute|null
+     * @return froq\reflection\ReflectionAttribute|null
      */
     public function getAttribute(string $name): ReflectionAttribute|null
     {
         return (new AttributeReflector($this))->getAttribute($name);
+    }
+
+    /**
+     * Get attributes.
+     *
+     * @param  string|null $name
+     * @param  int|null    $flags
+     * @return array<froq\reflection\ReflectionAttribute>
+     * @override
+     */
+    public function getAttributes(string $name = null, int $flags = null): array
+    {
+        return (new AttributeReflector($this))->getAttributes($name, $flags);
     }
 
     /**
