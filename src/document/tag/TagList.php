@@ -93,7 +93,7 @@ class TagList implements Arrayable, \Countable, \IteratorAggregate, \ArrayAccess
             Tag::class, get_type($tag)
         ));
 
-        if ($index == null) {
+        if ($index === null) {
             $this->tags[] = $tag;
         } else {
             $this->tags[$index] = $tag;
