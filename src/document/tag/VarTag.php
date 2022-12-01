@@ -15,11 +15,7 @@ namespace froq\reflection\document\tag;
  */
 class VarTag extends Tag
 {
-    /**
-     * Tag ID.
-     *
-     * @const string
-     */
+    /** Tag ID. */
     public const ID = 'var';
 
     /**

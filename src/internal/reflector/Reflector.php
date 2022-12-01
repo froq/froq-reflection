@@ -9,7 +9,7 @@ namespace froq\reflection\internal\reflector;
  * Base reflector class.
  *
  * @package froq\reflection\internal\reflector
- * @object  froq\reflection\internal\reflector\Reflector
+ * @class   froq\reflection\internal\reflector\Reflector
  * @author  Kerem Güneş
  * @since   6.0
  * @internal
@@ -18,8 +18,6 @@ abstract class Reflector
 {
     /**
      * Class, method, function, parameter, property and class constant reflection.
-     *
-     * @var Reflector
      */
     protected readonly \Reflector $reflector;
 

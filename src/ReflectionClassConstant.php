@@ -13,7 +13,7 @@ use Set;
  * An extended `ReflectionClassConstant` class.
  *
  * @package froq\reflection
- * @object  froq\reflection\ReflectionClassConstant
+ * @class   froq\reflection\ReflectionClassConstant
  * @author  Kerem Güneş
  * @since   6.0
  */

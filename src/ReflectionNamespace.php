@@ -9,13 +9,13 @@ namespace froq\reflection;
  * Namespace reflection class.
  *
  * @package froq\reflection
- * @object  froq\reflection\ReflectionNamespace
+ * @class   froq\reflection\ReflectionNamespace
  * @author  Kerem Güneş
  * @since   6.0
  */
 class ReflectionNamespace implements \Reflector
 {
-    /** @var string */
+    /** Namespace name. */
     public readonly string $name;
 
     /**

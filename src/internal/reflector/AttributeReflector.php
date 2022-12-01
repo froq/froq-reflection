@@ -12,7 +12,7 @@ use Set;
  * Attribute reflector class.
  *
  * @package froq\reflection\internal\reflector
- * @object  froq\reflection\internal\reflector\AttributeReflector
+ * @class   froq\reflection\internal\reflector\AttributeReflector
  * @author  Kerem Güneş
  * @since   6.0
  * @internal

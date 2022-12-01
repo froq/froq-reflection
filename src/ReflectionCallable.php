@@ -13,7 +13,7 @@ use froq\reflection\internal\reference\CallableReference;
  * one and adds some other utility methods.
  *
  * @package froq\reflection
- * @object  froq\reflection\ReflectionCallable
+ * @class   froq\reflection\ReflectionCallable
  * @author  Kerem Güneş
  * @since   5.27, 6.0
  */

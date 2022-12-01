@@ -13,7 +13,7 @@ use Set;
  * Parent (class) reflector class.
  *
  * @package froq\reflection\internal\reflector
- * @object  froq\reflection\internal\reflector\ParentReflector
+ * @class   froq\reflection\internal\reflector\ParentReflector
  * @author  Kerem Güneş
  * @since   6.0
  * @internal

@@ -11,11 +11,11 @@ use froq\util\Objects;
 use RegExp;
 
 /**
- * An reflection class, combines `ReflectionNamedType`, `ReflectionUnionType`
+ * A reflection class, combines `ReflectionNamedType`, `ReflectionUnionType`
  * and `ReflectionIntersectionType` as one and adds some other utility methods.
  *
  * @package froq\reflection
- * @object  froq\reflection\ReflectionType
+ * @class   froq\reflection\ReflectionType
  * @author  Kerem Güneş
  * @since   5.31, 6.0
  */

@@ -17,11 +17,7 @@ use froq\common\interface\Arrayable;
  */
 class TagList implements Arrayable, \Countable, \IteratorAggregate, \ArrayAccess
 {
-    /**
-     * Tags.
-     *
-     * @var array
-     */
+    /** List of tags. */
     private array $tags;
 
     /**

@@ -15,11 +15,7 @@ namespace froq\reflection\document\tag;
  */
 class SeeTag extends Tag
 {
-    /**
-     * Tag ID.
-     *
-     * @const string
-     */
+    /** Tag ID. */
     public const ID = 'see';
 
     /**

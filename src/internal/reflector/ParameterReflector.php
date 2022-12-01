@@ -12,7 +12,7 @@ use Set;
  * Parameter reflector class.
  *
  * @package froq\reflection\internal\reflector
- * @object  froq\reflection\internal\reflector\ParameterReflector
+ * @class   froq\reflection\internal\reflector\ParameterReflector
  * @author  Kerem Güneş
  * @since   6.0
  * @internal

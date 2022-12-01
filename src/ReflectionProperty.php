@@ -14,7 +14,7 @@ use Set;
  * An extended `ReflectionProperty` class.
  *
  * @package froq\reflection
- * @object  froq\reflection\ReflectionProperty
+ * @class   froq\reflection\ReflectionProperty
  * @author  Kerem Güneş
  * @since   5.31, 6.0
  */

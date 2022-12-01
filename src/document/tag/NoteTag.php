@@ -15,11 +15,7 @@ namespace froq\reflection\document\tag;
  */
 class NoteTag extends GenericTag
 {
-    /**
-     * Tag ID.
-     *
-     * @const string
-     */
+    /** Tag ID. */
     public const ID = 'note';
 
     /**

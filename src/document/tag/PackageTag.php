@@ -15,11 +15,7 @@ namespace froq\reflection\document\tag;
  */
 class PackageTag extends Tag
 {
-    /**
-     * Tag ID.
-     *
-     * @const string
-     */
+    /** Tag ID. */
     public const ID = 'package';
 
     /**

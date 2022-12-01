@@ -13,7 +13,7 @@ use Set;
  * Trait reflector class.
  *
  * @package froq\reflection\internal\reflector
- * @object  froq\reflection\internal\reflector\TraitReflector
+ * @class   froq\reflection\internal\reflector\TraitReflector
  * @author  Kerem Güneş
  * @since   6.0
  * @internal

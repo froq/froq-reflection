@@ -18,18 +18,10 @@ use froq\reflection\document\tag\Tag;
  */
 abstract class Document
 {
-    /**
-     * Parsed description.
-     *
-     * @var string
-     */
+    /** Parsed description. */
     private string $description;
 
-    /**
-     * Parsed tags.
-     *
-     * @var array
-     */
+    /** Parsed tags. */
     private array $tags;
 
     /**

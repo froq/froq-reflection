@@ -12,7 +12,7 @@ use Set;
  * Property reflector class.
  *
  * @package froq\reflection\internal\reflector
- * @object  froq\reflection\internal\reflector\PropertyReflector
+ * @class   froq\reflection\internal\reflector\PropertyReflector
  * @author  Kerem Güneş
  * @since   6.0
  * @internal

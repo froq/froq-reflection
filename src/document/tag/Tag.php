@@ -17,31 +17,17 @@ abstract class Tag implements \Stringable
 {
     /**
      * Tag ID.
-     *
-     * @const string|null
      * @abstract
      */
     public const ID = null;
 
-    /**
-     * ID (aka Name).
-     *
-     * @var string
-     */
+    /** ID (aka Name). */
     private string $id;
 
-    /**
-     * Description text.
-     *
-     * @var string|null
-     */
+    /** Description text. */
     private string|null $description;
 
-    /**
-     * Attributes.
-     *
-     * @var array|null
-     */
+    /** Attributes. */
     private array|null $attributes;
 
     /**

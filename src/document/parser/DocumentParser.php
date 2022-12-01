@@ -18,11 +18,7 @@ use RegExp, XArray, XString;
  */
 class DocumentParser
 {
-    /**
-     * Doc comment source.
-     *
-     * @var string
-     */
+    /** Doc comment source. */
     private string $source;
 
     /**

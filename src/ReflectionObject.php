@@ -12,7 +12,7 @@ use froq\reflection\internal\reference\ClassReference;
  * An extended `ReflectionObject` class.
  *
  * @package froq\reflection
- * @object  froq\reflection\ReflectionObject
+ * @class   froq\reflection\ReflectionObject
  * @author  Kerem Güneş
  * @since   5.31, 6.0
  */

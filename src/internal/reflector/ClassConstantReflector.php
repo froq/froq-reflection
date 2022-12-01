@@ -12,7 +12,7 @@ use Set;
  * Class constant reflector class.
  *
  * @package froq\reflection\internal\reflector
- * @object  froq\reflection\internal\reflector\ClassConstantReflector
+ * @class   froq\reflection\internal\reflector\ClassConstantReflector
  * @author  Kerem Güneş
  * @since   6.0
  * @internal

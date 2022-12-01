@@ -6,10 +6,10 @@
 namespace froq\reflection;
 
 /**
- * Kind of missing reflection class.
+ * A kind of missing reflection class.
  *
  * @package froq\reflection
- * @object  froq\reflection\ReflectionInterface
+ * @class   froq\reflection\ReflectionInterface
  * @author  Kerem Güneş
  * @since   5.31, 6.0
  */

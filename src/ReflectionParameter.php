@@ -12,7 +12,7 @@ use froq\reflection\internal\reference\ParameterReference;
  * An extended `ReflectionParameter` class.
  *
  * @package froq\reflection
- * @object  froq\reflection\ReflectionParameter
+ * @class   froq\reflection\ReflectionParameter
  * @author  Kerem Güneş
  * @since   5.31, 6.0
  */

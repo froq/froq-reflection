@@ -15,11 +15,7 @@ namespace froq\reflection\document\tag;
  */
 class MethodTag extends Tag
 {
-    /**
-     * Tag ID.
-     *
-     * @const string
-     */
+    /** Tag ID. */
     public const ID = 'method';
 
     /**

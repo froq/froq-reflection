@@ -20,9 +20,7 @@ use froq\reflection\internal\reference\Reference;
 trait ReferenceTrait
 {
     /**
-     * Reference holder.
-     *
-     * @var froq\reflection\internal\reference\Reference
+     * Reference holder instance.
      */
     public readonly Reference $reference;
 }

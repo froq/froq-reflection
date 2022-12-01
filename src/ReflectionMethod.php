@@ -12,7 +12,7 @@ use froq\reflection\internal\reference\CallableReference;
  * An extended `ReflectionMethod` class.
  *
  * @package froq\reflection
- * @object  froq\reflection\ReflectionMethod
+ * @class   froq\reflection\ReflectionMethod
  * @author  Kerem Güneş
  * @since   5.27, 6.0
  */

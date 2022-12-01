@@ -12,7 +12,7 @@ use Set;
  * Method reflector class.
  *
  * @package froq\reflection\internal\reflector
- * @object  froq\reflection\internal\reflector\MethodReflector
+ * @class   froq\reflection\internal\reflector\MethodReflector
  * @author  Kerem Güneş
  * @since   6.0
  * @internal

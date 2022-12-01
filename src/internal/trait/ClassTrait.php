@@ -16,7 +16,7 @@ use Set;
  * An internal trait, used by `ReflectionClass` and `ReflectionObject` classes.
  *
  * @package froq\reflection\internal\trait
- * @object  froq\reflection\internal\trait\ClassTrait
+ * @class   froq\reflection\internal\trait\ClassTrait
  * @author  Kerem Güneş
  * @since   5.27, 6.0
  * @internal

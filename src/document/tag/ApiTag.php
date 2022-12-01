@@ -15,11 +15,7 @@ namespace froq\reflection\document\tag;
  */
 class ApiTag extends GenericTag
 {
-    /**
-     * Tag ID.
-     *
-     * @const string
-     */
+    /** Tag ID. */
     public const ID = 'api';
 
     /**

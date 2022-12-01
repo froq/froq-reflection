@@ -15,11 +15,7 @@ namespace froq\reflection\document\tag;
  */
 class TodoTag extends GenericTag
 {
-    /**
-     * Tag ID.
-     *
-     * @const string
-     */
+    /** Tag ID. */
     public const ID = 'todo';
 
     /**

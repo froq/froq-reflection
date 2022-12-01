@@ -19,8 +19,6 @@ class TagPattern
      * Pattern for parsing, matches following format:
      *
      * [at]author ["Name"] ["<Email>"|""]
-     *
-     * @const string
      */
     public const AUTHOR = '~^(?:@author) +([^\<]+)(?: *\<([^\>]+)\>)?$~';
 
@@ -28,8 +26,6 @@ class TagPattern
      * Pattern for parsing, matches following format:
      *
      * [at]causes ["Type"] ["Description"|""]
-     *
-     * @const string
      */
     public const CAUSES = '~^(?:@causes) +([^ ]+) *(.*)$~';
 
@@ -37,8 +33,6 @@ class TagPattern
      * Pattern for parsing, matches following format:
      *
      * [at]class ["Namespace"|""]["Name"]
-     *
-     * @const string
      */
     public const CLASS_ = '~^(?:@class) +([\w\\\]+)$~';
 
@@ -46,8 +40,6 @@ class TagPattern
      * Pattern for parsing, matches following format:
      *
      * [at]const ["Type"] ["Name"|""] ["Description"|""]
-     *
-     * @const string
      */
     public const CONST = '~^(?:@const) +([^ ]+) *(\w+)? *(.*)$~';
 
@@ -55,8 +47,6 @@ class TagPattern
      * Pattern for parsing, matches following format:
      *
      * [at]["Tag ID"] ["Description"|""]
-     *
-     * @const string
      */
     public const GENERIC = '~^(?:@\w[\w\-]+) *(.*)$~';
 
@@ -64,8 +54,6 @@ class TagPattern
      * Pattern for parsing, matches following format:
      *
      * [at]deprecated ["Version"] ["Description"|""]
-     *
-     * @const string
      */
     public const DEPRECATED = '~^(?:@deprecated) +(\d[\d\.]+)? *(.*)$~';
 
@@ -73,8 +61,6 @@ class TagPattern
      * Pattern for parsing, matches following format:
      *
      * [at]link ["URL"] ["Description"|""]
-     *
-     * @const string
      */
     public const LINK = '~^(?:@link) +((?:\w+:)?//[^ ]+) *(.*)$~';
 
@@ -82,8 +68,6 @@ class TagPattern
      * Pattern for parsing, matches following format:
      *
      * [at]method ["Return Type"|""] ["&"|""]["Name"](["Parameters"|""]) ["Description"|""]
-     *
-     * @const string
      */
     public const METHOD = '~^(?:@method) +([^@]+) +(&)?(\w+)\((.*)\) *(.*)$~';
 
@@ -91,8 +75,6 @@ class TagPattern
      * Pattern for parsing, matches following format:
      *
      * [at]package ["Name"]
-     *
-     * @const string
      */
     public const PACKAGE = '~^(?:@package) +([\w\\\]+)$~';
 
@@ -100,8 +82,6 @@ class TagPattern
      * Pattern for parsing, matches following format:
      *
      * [@]param ["Type"] ["&"|"&..."|"..."|""]$["Name"] ["Description"|""]
-     *
-     * @const string
      */
     public const PARAM = '~^(?:@param) +([^ ]*) *(?:(&|&\.{3}|\.{3}))?\$(\w+) *(.*)$~';
 
@@ -109,8 +89,6 @@ class TagPattern
      * Pattern for parsing, matches following format:
      *
      * [at]property["Variant"|""] ["Type"] $["Name"] ["Description"|""]
-     *
-     * @const string
      */
     public const PROPERTY = '~^(?:@property(?:-(?:read|write))?) +([^ ]+) +\$(\w+) *(.*)$~';
 
@@ -118,8 +96,6 @@ class TagPattern
      * Pattern for parsing, matches following format:
      *
      * [at]return ["Type"] ["Description"|""]
-     *
-     * @const string
      */
     public const RETURN = '~^(?:@return) +([^ ]+) *(.*)$~';
 
@@ -127,8 +103,6 @@ class TagPattern
      * Pattern for parsing, matches following format:
      *
      * [at]see ["File"|"FQSEN"] ["Description"|""]
-     *
-     * @const string
      */
     public const SEE = '~^(?:@see) +([^ ]+) *(.*)$~';
 
@@ -136,8 +110,6 @@ class TagPattern
      * Pattern for parsing, matches following formats:
      *
      * [at]since ["Version"] ["Description"|""]
-     *
-     * @const string
      */
     public const SINCE = '~^(?:@since) +(\d[\d\.]+) *(.*)$~';
 
@@ -145,8 +117,6 @@ class TagPattern
      * Pattern for parsing, matches following format:
      *
      * [at]throws ["Type"] ["Description"|""]
-     *
-     * @const string
      */
     public const THROWS = '~^(?:@throws) +([^ ]+) *(.*)$~';
 
@@ -154,8 +124,6 @@ class TagPattern
      * Pattern for parsing, matches following format:
      *
      * [at]uses ["File"|"FQSEN"] ["Description"|""]
-     *
-     * @const string
      */
     public const USES = '~^(?:@uses) +([^ ]+) *(.*)$~';
 
@@ -163,8 +131,6 @@ class TagPattern
      * Pattern for parsing, matches following format:
      *
      * [at]var ["Type"] $["Name"|""] ["Description"|""]
-     *
-     * @const string
      */
     public const VAR = '~^(?:@var) +([^ ]+)(?: +\$(\w+))? *(.*)$~';
 
@@ -172,8 +138,6 @@ class TagPattern
      * Pattern for parsing, matches following formats:
      *
      * [at]version ["Version"] ["Description"|""]
-     *
-     * @const string
      */
     public const VERSION = '~^(?:@version) +(?:([\d\.]+|\$.+\$|@.+@)) *(.*)$~';
 }

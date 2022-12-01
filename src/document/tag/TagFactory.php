@@ -17,32 +17,16 @@ use froq\reflection\document\tag\parser\TagParser;
  */
 class TagFactory
 {
-    /**
-     * Tag ID.
-     *
-     * @var string
-     */
+    /** Tag ID. */
     private string $id;
 
-    /**
-     * Tag body.
-     *
-     * @var string
-     */
+    /** Tag body. */
     private string $body;
 
-    /**
-     * Parser.
-     *
-     * @var TagParser
-     */
+    /** Parser instance. */
     private TagParser $parser;
 
-    /**
-     * Map of tag classes.
-     *
-     * @var array
-     */
+    /** Map of tag classes. */
     private static array $map;
 
     /**
@@ -55,6 +39,7 @@ class TagFactory
     {
         isset($id)   && $this->withId($id);
         isset($body) && $this->withBody($body);
+
         $this->parser = new TagParser();
 
         self::$map ??= $this->generateMap();

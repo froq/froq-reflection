@@ -16,7 +16,7 @@ use Set;
  * `ReflectionFunction` classes.
  *
  * @package froq\reflection\internal\trait
- * @object  froq\reflection\internal\trait\CallableTrait
+ * @class   froq\reflection\internal\trait\CallableTrait
  * @author  Kerem Güneş
  * @since   5.27, 6.0
  * @internal
@@ -32,6 +32,7 @@ trait CallableTrait
             return ['name'  => $this->reference->reflection->name,
                     'class' => $this->reference->reflection->class];
         }
+
         return ['name' => $this->reference->reflection->name];
     }
 

@@ -15,11 +15,7 @@ namespace froq\reflection\document\tag;
  */
 class DeprecatedTag extends Tag
 {
-    /**
-     * Tag ID.
-     *
-     * @const string
-     */
+    /** Tag ID. */
     public const ID = 'deprecated';
 
     /**

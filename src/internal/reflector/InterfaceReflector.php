@@ -13,7 +13,7 @@ use Set;
  * Interface reflector class.
  *
  * @package froq\reflection\internal\reflector
- * @object  froq\reflection\internal\reflector\InterfaceReflector
+ * @class   froq\reflection\internal\reflector\InterfaceReflector
  * @author  Kerem Güneş
  * @since   6.0
  * @internal

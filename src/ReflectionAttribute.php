@@ -10,10 +10,10 @@ use froq\reflection\internal\reference\AttributeReference;
 use froq\util\Objects;
 
 /**
- * An extended `ReflectionAttribute` class.
+ * An extended (recreated) `ReflectionAttribute` class.
  *
  * @package froq\reflection
- * @object  froq\reflection\ReflectionAttribute
+ * @class   froq\reflection\ReflectionAttribute
  * @author  Kerem Güneş
  * @since   7.0
  */
@@ -21,17 +21,13 @@ class ReflectionAttribute implements \Reflector
 {
     use ReferenceTrait;
 
-    /**
-     * As a copy constant.
-     *
-     * @const int
-     */
+    /** As a copy constant. */
     public const IS_INSTANCEOF = \ReflectionAttribute::IS_INSTANCEOF;
 
     /**
      * Constructor.
      *
-     * @param \ReflectionAttribute $attribute
+     * @param ReflectionAttribute $attribute
      */
     public function __construct(\ReflectionAttribute $attribute)
     {
