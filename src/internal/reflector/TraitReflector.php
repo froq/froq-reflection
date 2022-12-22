@@ -104,6 +104,14 @@ class TraitReflector extends Reflector
                     $ref->getProperty($this->reflector->name)->class === $ref->name
                 )
             );
+        } elseif ($this->reflector instanceof \ReflectionClassConstant) {
+            $ret = array_filter(
+                $this->reflector->getDeclaringClass()->getTraits(),
+                fn(ReflectionTrait $ref): bool => (
+                    $ref->hasConstant($this->reflector->name) &&
+                    $ref->getConstant($this->reflector->name)->class === $ref->name
+                )
+            );
         }
 
         return array_list($ret);

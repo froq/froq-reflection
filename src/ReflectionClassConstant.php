@@ -6,7 +6,7 @@
 namespace froq\reflection;
 
 use froq\reflection\internal\trait\DocumentTrait;
-use froq\reflection\internal\reflector\{AttributeReflector, InterfaceReflector};
+use froq\reflection\internal\reflector\{AttributeReflector, InterfaceReflector, TraitReflector};
 use Set;
 
 /**
@@ -172,6 +172,57 @@ class ReflectionClassConstant extends \ReflectionClassConstant
     public function getInterfaceNames(): array
     {
         return (new InterfaceReflector($this))->getInterfaceNames();
+    }
+
+    /**
+     * Set of traits.
+     *
+     * @return Set<froq\reflection\ReflectionTrait>
+     */
+    public function traits(): Set
+    {
+        return (new TraitReflector($this))->traits();
+    }
+
+    /**
+     * Get trait.
+     *
+     * @param  string|null $name
+     * @return froq\reflection\ReflectionTrait|null
+     */
+    public function getTrait(string $name = null): ReflectionTrait|null
+    {
+        return (new TraitReflector($this))->getTrait($name);
+    }
+
+    /**
+     * Get traits.
+     *
+     * @return array<froq\reflection\ReflectionTrait>
+     */
+    public function getTraits(): array
+    {
+        return (new TraitReflector($this))->getTraits();
+    }
+
+    /**
+     * Get trait name.
+     *
+     * @return string|null
+     */
+    public function getTraitName(): string|null
+    {
+        return (new TraitReflector($this))->getTrait()?->name;
+    }
+
+    /**
+     * Get trait names.
+     *
+     * @return array<string>
+     */
+    public function getTraitNames(): array
+    {
+        return (new TraitReflector($this))->getTraitNames();
     }
 
     /**
