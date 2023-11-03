@@ -1,35 +1,31 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-reflection
  */
-declare(strict_types=1);
-
 namespace froq\reflection\internal\trait;
 
 use froq\reflection\{Reflection, ReflectionClass, ReflectionClassConstant, ReflectionProperty, ReflectionMethod,
-    ReflectionInterface, ReflectionTrait, ReflectionNamespace};
+    ReflectionInterface, ReflectionTrait, ReflectionAttribute, ReflectionNamespace};
 use froq\reflection\internal\reflector\{AttributeReflector, InterfaceReflector, TraitReflector,
     ParentReflector, ClassConstantReflector, PropertyReflector, MethodReflector};
 use froq\util\Objects;
-use ReflectionAttribute;
 use Set;
 
 /**
  * An internal trait, used by `ReflectionClass` and `ReflectionObject` classes.
  *
  * @package froq\reflection\internal\trait
- * @object  froq\reflection\internal\trait\ClassTrait
+ * @class   froq\reflection\internal\trait\ClassTrait
  * @author  Kerem Güneş
  * @since   5.27, 6.0
  * @internal
  */
 trait ClassTrait
 {
-    /** Class/object reference. */
-    public string|object $reference;
-
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __debugInfo(): array
     {
         return ['name' => $this->name];
@@ -48,13 +44,23 @@ trait ClassTrait
     }
 
     /**
+     * Check whether this is a clonable class (for typos).
+     *
+     * @return bool
+     */
+    public function isClonable(): bool
+    {
+        return $this->isCloneable();
+    }
+
+    /**
      * Get type.
      *
      * @return string
      */
     public function getType(): string
     {
-        return Objects::getType($this->reference);
+        return Objects::getType($this->reference->target);
     }
 
     /**
@@ -65,7 +71,7 @@ trait ClassTrait
      */
     public function getNamespace(bool $baseOnly = false): string
     {
-        return Objects::getNamespace($this->reference, $baseOnly);
+        return Objects::getNamespace($this->reference->target, $baseOnly);
     }
 
     /**
@@ -99,6 +105,16 @@ trait ClassTrait
     }
 
     /**
+     * Has parent (for classes & interfaces).
+     *
+     * @return bool
+     */
+    public function hasParent(): bool
+    {
+        return (new ParentReflector($this))->hasParent();
+    }
+
+    /**
      * Get parent.
      *
      * @param  bool $baseOnly
@@ -123,9 +139,9 @@ trait ClassTrait
      * Get parent name.
      *
      * @param  bool $baseOnly
-     * @return string
+     * @return string|null
      */
-    public function getParentName(bool $baseOnly = false): string
+    public function getParentName(bool $baseOnly = false): string|null
     {
         return (new ParentReflector($this))->getParentName($baseOnly);
     }
@@ -144,7 +160,7 @@ trait ClassTrait
      * Get parent class.
      *
      * @param  bool $baseOnly
-     * @return froq\reflection\ReflectionClass
+     * @return froq\reflection\ReflectionClass|null
      * @override
      */
     #[\ReturnTypeWillChange]
@@ -164,7 +180,7 @@ trait ClassTrait
     /**
      * Set of attributes.
      *
-     * @return Set<ReflectionAttribute>
+     * @return Set<froq\reflection\ReflectionAttribute>
      */
     public function attributes(): Set
     {
@@ -186,11 +202,24 @@ trait ClassTrait
      * Get attribute.
      *
      * @param  string $name
-     * @return ReflectionAttribute|null
+     * @return froq\reflection\ReflectionAttribute|null
      */
     public function getAttribute(string $name): ReflectionAttribute|null
     {
         return (new AttributeReflector($this))->getAttribute($name);
+    }
+
+    /**
+     * Get attributes.
+     *
+     * @param  string|null $name
+     * @param  int|null    $flags
+     * @return array<froq\reflection\ReflectionAttribute>
+     * @override
+     */
+    public function getAttributes(string $name = null, int $flags = null): array
+    {
+        return (new AttributeReflector($this))->getAttributes($name, $flags);
     }
 
     /**
@@ -314,7 +343,7 @@ trait ClassTrait
      * Get method.
      *
      * @param  string $name
-     * @return froq\reflection\ReflectionMethod
+     * @return froq\reflection\ReflectionMethod|null
      * @override
      */
     #[\ReturnTypeWillChange]
@@ -371,7 +400,7 @@ trait ClassTrait
      * Get constant.
      *
      * @param  string $name
-     * @return array<mixed>
+     * @return froq\reflection\ReflectionClassConstant|null
      * @override
      */
     public function getConstant(string $name): ReflectionClassConstant|null
@@ -417,6 +446,10 @@ trait ClassTrait
     }
 
     /**
+     * Get reflection constant.
+     *
+     * @param  string $name
+     * @return froq\reflection\ReflectionClassConstant|null
      * @override
      */
     #[\ReturnTypeWillChange]
@@ -426,6 +459,10 @@ trait ClassTrait
     }
 
     /**
+     * Get reflection constants.
+     *
+     * @param  int|null $filter
+     * @return array<froq\reflection\ReflectionClassConstant>
      * @override
      */
     public function getReflectionConstants(int $filter = null): array
@@ -470,7 +507,7 @@ trait ClassTrait
      * Get property.
      *
      * @param  string $name
-     * @return froq\reflection\ReflectionProperty
+     * @return froq\reflection\ReflectionProperty|null
      * @override
      */
     #[\ReturnTypeWillChange]
@@ -482,7 +519,7 @@ trait ClassTrait
     /**
      * Get property.
      *
-     * @param  int $filter
+     * @param  int|null $filter
      * @return array<froq\reflection\ReflectionProperty>
      * @override
      */
@@ -512,5 +549,75 @@ trait ClassTrait
     public function getPropertyValues(int $filter = null, bool $assoc = false): array
     {
         return (new PropertyReflector($this))->getPropertyValues($filter, $assoc);
+    }
+
+    /**
+     * Check for an implementing interface.
+     *
+     * @param  string|ReflectionClass $interface
+     * @param  bool                   $check
+     * @return bool
+     * @throws ReflectionException
+     * @override
+     */
+    public function implementsInterface(string|\ReflectionClass $interface, bool $check = false): bool
+    {
+        try {
+            return parent::implementsInterface($interface);
+        } catch (\ReflectionException $e) {
+            $check && throw $e;
+            return false;
+        }
+    }
+
+    /**
+     * Check for a using trait.
+     *
+     * @param  string|ReflectionClass $trait
+     * @param  bool                   $check
+     * @return bool
+     * @throws ReflectionException
+     * @missing
+     */
+    public function usesTrait(string|\ReflectionClass $trait, bool $check = false): bool
+    {
+        $name = is_string($trait) ? $trait : $trait->name;
+
+        if ($check && !trait_exists($name)) {
+            $message = match (true) {
+                default => 'Trait "%s" does not exist',
+                class_exists($name) => '%s is not a trait, it is a class',
+                interface_exists($name) => '%s is not a trait, it is an interface',
+            };
+
+            throw new \ReflectionException(sprintf($message, $name));
+        }
+
+        return in_array($name, $this->getTraitNames(), true);
+    }
+
+    /**
+     * Check for an extending a class.
+     *
+     * @param  string|ReflectionClass $trait
+     * @param  bool                   $check
+     * @return bool
+     * @throws ReflectionException
+     */
+    public function extendsClass(string|\ReflectionClass $class, bool $check = false): bool
+    {
+        $name = is_string($class) ? $class : $class->name;
+
+        if ($check && !class_exists($name)) {
+            $message = match (true) {
+                default => 'Class "%s" does not exist',
+                trait_exists($name) => '%s is not a class, it is a trait',
+                interface_exists($name) => '%s is not a class, it is an interface',
+            };
+
+            throw new \ReflectionException(sprintf($message, $name));
+        }
+
+        return in_array($name, $this->getParentNames(), true);
     }
 }

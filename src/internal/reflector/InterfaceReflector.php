@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-reflection
  */
-declare(strict_types=1);
-
 namespace froq\reflection\internal\reflector;
 
 use froq\reflection\{ReflectionInterface, ReflectionCallable};
@@ -15,7 +13,7 @@ use Set;
  * Interface reflector class.
  *
  * @package froq\reflection\internal\reflector
- * @object  froq\reflection\internal\reflector\InterfaceReflector
+ * @class   froq\reflection\internal\reflector\InterfaceReflector
  * @author  Kerem Güneş
  * @since   6.0
  * @internal
@@ -29,8 +27,7 @@ class InterfaceReflector extends Reflector
      */
     public function interfaces(): Set
     {
-        return (new Set($this->getInterfaceNames()))
-            ->map(fn($name) => new ReflectionInterface($name));
+        return new Set($this->getInterfaces());
     }
 
     /**
@@ -45,7 +42,7 @@ class InterfaceReflector extends Reflector
         $name ??= end($names); // For non-class reflections.
 
         if ($name && in_array($name, $names, true)) {
-            return new ReflectionInterface($name);
+            return $this->convert($name);
         }
         return null;
     }
@@ -57,9 +54,10 @@ class InterfaceReflector extends Reflector
      */
     public function getInterfaces(): array
     {
-        return array_map(
-            fn($item) => is_string($item) ? new ReflectionInterface($item) : $item,
-            $this->collect()
+        return array_apply(
+            $this->collect(),
+            fn(string|ReflectionInterface $item): ReflectionInterface
+                => is_string($item) ? $this->convert($item) : $item
         );
     }
 
@@ -70,9 +68,10 @@ class InterfaceReflector extends Reflector
      */
     public function getInterfaceNames(): array
     {
-        return array_map(
-            fn($item) => is_string($item) ? $item : $item->name,
-            $this->collect()
+        return array_apply(
+            $this->collect(),
+            fn(string|ReflectionInterface $item): string
+                => is_string($item) ? $item : $item->name
         );
     }
 
@@ -81,32 +80,40 @@ class InterfaceReflector extends Reflector
      */
     private function collect(): array
     {
-        if ($this->ref instanceof \ReflectionClass
-            || $this->ref instanceof \ReflectionObject) {
-            return Objects::getInterfaces($this->ref->name);
+        if ($this->reflector instanceof \ReflectionClass
+            || $this->reflector instanceof \ReflectionObject) {
+            return Objects::getInterfaces($this->reflector->name);
         }
 
         $ret = [];
 
-        if ($this->ref instanceof \ReflectionMethod
-            || $this->ref instanceof ReflectionCallable) {
+        if ($this->reflector instanceof \ReflectionMethod
+            || $this->reflector instanceof ReflectionCallable) {
             $ret = array_filter(
-                $this->ref->getDeclaringClass()->getInterfaces(),
-                fn($ref) => (
-                    $ref->hasMethod($this->ref->name) &&
-                    $ref->getMethod($this->ref->name)->class == $ref->name
+                $this->reflector->getDeclaringClass()->getInterfaces(),
+                fn(ReflectionInterface $ref): bool => (
+                    $ref->hasMethod($this->reflector->name) &&
+                    $ref->getMethod($this->reflector->name)->class === $ref->name
                 )
             );
-        } elseif ($this->ref instanceof \ReflectionClassConstant) {
+        } elseif ($this->reflector instanceof \ReflectionClassConstant) {
             $ret = array_filter(
-                $this->ref->getDeclaringClass()->getInterfaces(),
-                fn($ref) => (
-                    $ref->hasConstant($this->ref->name) &&
-                    $ref->getReflectionConstant($this->ref->name)->class == $ref->name
+                $this->reflector->getDeclaringClass()->getInterfaces(),
+                fn(ReflectionInterface $ref): bool => (
+                    $ref->hasConstant($this->reflector->name) &&
+                    $ref->getReflectionConstant($this->reflector->name)->class === $ref->name
                 )
             );
         }
 
-        return array_values($ret);
+        return array_list($ret);
+    }
+
+    /**
+     * Convert interfaces to instances.
+     */
+    private function convert(string $name): ReflectionInterface
+    {
+        return new ReflectionInterface($name);
     }
 }

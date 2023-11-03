@@ -1,24 +1,27 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-reflection
  */
-declare(strict_types=1);
-
 namespace froq\reflection;
 
+use froq\reflection\internal\trait\ReferenceTrait;
+use froq\reflection\internal\reference\TypeReference;
+use froq\util\Objects;
+use RegExp;
+
 /**
- * An reflection class, combines `ReflectionNamedType`, `ReflectionUnionType`
+ * A reflection class, combines `ReflectionNamedType`, `ReflectionUnionType`
  * and `ReflectionIntersectionType` as one and adds some other utility methods.
  *
  * @package froq\reflection
- * @object  froq\reflection\ReflectionType
+ * @class   froq\reflection\ReflectionType
  * @author  Kerem Güneş
  * @since   5.31, 6.0
  */
 class ReflectionType extends \ReflectionType implements \Reflector
 {
-    use internal\trait\ReferenceTrait;
+    use ReferenceTrait;
 
     /**
      * Constructor.
@@ -29,9 +32,12 @@ class ReflectionType extends \ReflectionType implements \Reflector
      */
     public function __construct(string $name, bool $nullable = false)
     {
-        $name || throw new \ReflectionException('No name given');
+        $name = trim($name);
+        if ($name === '') {
+            throw new \ReflectionException('Invalid name');
+        }
 
-        $name = xstring($name);
+        $name = xstring($name)->trim('\\');
 
         // Null/mixed is nullable.
         if ($name->equals(['null', 'mixed'], icase: true)) {
@@ -59,11 +65,11 @@ class ReflectionType extends \ReflectionType implements \Reflector
             $nullable = true;
         }
 
-        $this->setReference([
-            'name'     => $name,
-            'names'    => $names,
-            'nullable' => $nullable
-        ]);
+        $this->reference = new TypeReference(
+            name     : $name,
+            names    : $names,
+            nullable : $nullable
+        );
     }
 
     /**
@@ -126,7 +132,17 @@ class ReflectionType extends \ReflectionType implements \Reflector
      */
     public function getPureName(): string|null
     {
-        return $this->isNamed() ? $this->reference->names->first() : null;
+        return $this->isNamed() ? $this->reference->names[0] : null;
+    }
+
+    /**
+     * Get short name if class (without "namespace" part).
+     *
+     * @return string|null
+     */
+    public function getShortName(): string|null
+    {
+        return $this->isClass() ? Objects::getShortName($this->reference->names[0]) : null;
     }
 
     /**
@@ -198,9 +214,11 @@ class ReflectionType extends \ReflectionType implements \Reflector
      */
     public function isBuiltin(): bool
     {
-        return $this->reference->name->test(
-            '~^(int|float|string|bool|array|object|callable|iterable|mixed|true|false|null)(\|null)?$~'
+        static $re = new RegExp(
+            '^(int|float|string|bool|array|object|callable|iterable|mixed|true|false|null)(\|null)?$'
         );
+
+        return $this->reference->name->test($re);
     }
 
     /**
@@ -210,9 +228,11 @@ class ReflectionType extends \ReflectionType implements \Reflector
      */
     public function isCastable(): bool
     {
-        return $this->reference->name->test(
-            '~^(int|float|string|bool|array|object|null)$~'
+        static $re = new RegExp(
+            '^(int|float|string|bool|array|object|null)$'
         );
+
+        return $this->reference->name->test($re);
     }
 
     /**
@@ -288,23 +308,25 @@ class ReflectionType extends \ReflectionType implements \Reflector
     /**
      * Check whether type equals to given type.
      *
-     * @param  string $name
+     * @param  string|array<string> $name
+     * @param  bool                 $icase
      * @return bool
      */
-    public function equals(string $name): bool
+    public function equals(string|array $name, bool $icase = false): bool
     {
-        return $this->reference->name->equals($name);
+        return $this->reference->name->equals($name, $icase);
     }
 
     /**
      * Check whether contains given names.
      *
-     * @param  string ...$names
+     * @param  string|array<string> $name
+     * @param  bool                 $icase
      * @return bool
      */
-    public function contains(string ...$names): bool
+    public function contains(string|array $name, bool $icase = false): bool
     {
-        return $this->reference->names->contains(...$names);
+        return $this->reference->names->contains($name, $icase);
     }
 
     /**
@@ -321,15 +343,16 @@ class ReflectionType extends \ReflectionType implements \Reflector
     /**
      * Static initializer for ReflectionType types.
      *
-     * @param  ReflectionType $type
+     * @param  string|ReflectionType $type
      * @return froq\reflection\ReflectionType
      */
-    public static function from(\ReflectionType $type): ReflectionType
+    public static function from(string|\ReflectionType $type): ReflectionType
     {
         return new ReflectionType(
             ($type instanceof \ReflectionNamedType)
                 ? $type->getName() : (string) $type,
-            $type->allowsNull()
+            ($type instanceof \ReflectionType)
+                && $type->allowsNull()
         );
     }
 }

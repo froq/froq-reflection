@@ -1,43 +1,56 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-reflection
  */
-declare(strict_types=1);
-
 namespace froq\reflection;
 
+use froq\reflection\internal\trait\{DocumentTrait, ReferenceTrait};
+use froq\reflection\internal\reference\PropertyReference;
 use froq\reflection\internal\reflector\{AttributeReflector, TraitReflector};
-use ReflectionAttribute;
 use Set;
 
 /**
  * An extended `ReflectionProperty` class.
  *
  * @package froq\reflection
- * @object  froq\reflection\ReflectionProperty
+ * @class   froq\reflection\ReflectionProperty
  * @author  Kerem Güneş
  * @since   5.31, 6.0
  */
 class ReflectionProperty extends \ReflectionProperty
 {
-    /** Property reference. */
-    public object $reference;
+    use DocumentTrait, ReferenceTrait;
 
     /**
      * Constructor.
      *
-     * @param string|object $class
-     * @param string        $name
+     * @param string|object $classOrObjectOrProperty
+     * @param string|null   $property
      */
-    public function __construct(string|object $class, string $name)
+    public function __construct(string|object $classOrObjectOrProperty, string $property = null)
     {
-        parent::__construct($class, $name);
+        if (
+            // When "Foo::bar" given as single parameter.
+            func_num_args() === 1 && is_string($classOrObjectOrProperty)
+            && preg_match('~(.+)::(\w+)~', $classOrObjectOrProperty, $match)
+        ) {
+            [$target, $name] = array_slice($match, 1);
+        } else {
+            [$target, $name] = [$classOrObjectOrProperty, $property];
+        }
 
-        $this->reference = (object) ['name' => $name, 'class' => $class];
+        parent::__construct($target, $name);
+
+        $this->reference = new PropertyReference(
+            target : $target,
+            name   : $name
+        );
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __debugInfo(): array
     {
         return ['name' => $this->name, 'class' => $this->class];
@@ -73,7 +86,7 @@ class ReflectionProperty extends \ReflectionProperty
     /**
      * Set of attributes.
      *
-     * @return Set<ReflectionAttribute>
+     * @return Set<froq\reflection\ReflectionAttribute>
      */
     public function attributes(): Set
     {
@@ -95,11 +108,24 @@ class ReflectionProperty extends \ReflectionProperty
      * Get attribute.
      *
      * @param  string $name
-     * @return ReflectionAttribute|null
+     * @return froq\reflection\ReflectionAttribute|null
      */
     public function getAttribute(string $name): ReflectionAttribute|null
     {
         return (new AttributeReflector($this))->getAttribute($name);
+    }
+
+    /**
+     * Get attributes.
+     *
+     * @param  string|null $name
+     * @param  int|null    $flags
+     * @return array<froq\reflection\ReflectionAttribute>
+     * @override
+     */
+    public function getAttributes(string $name = null, int $flags = null): array
+    {
+        return (new AttributeReflector($this))->getAttributes($name, $flags);
     }
 
     /**
@@ -163,41 +189,47 @@ class ReflectionProperty extends \ReflectionProperty
         return (new TraitReflector($this))->getTraitNames();
     }
 
-    /** @override */
+    /**
+     * @throws ReflectionException
+     * @override
+     */
     public function setValue(mixed $object, mixed $value = null): void
     {
         // Swap for value-only calls.
-        if (func_num_args() == 1) {
+        if (func_num_args() === 1) {
             [$value, $object] = [$object, null];
         }
 
         // Permissive (to "object must be provided for instance properties" error).
-        if (!$object && is_object($this->reference->class)) {
-            $object = $this->reference->class;
+        if (!$object && is_object($this->reference->target)) {
+            $object = $this->reference->target;
         }
 
         if (!is_object($object)) {
             throw new \ReflectionException(sprintf(
                 'Cannot set property $%s of non-instantiated class %s',
-                $this->reference->name, get_class_name($this->reference->class)
+                $this->reference->name, get_class_name($this->reference->target)
             ));
         }
 
         parent::setValue($object, $value);
     }
 
-    /** @override */
+    /**
+     * @throws ReflectionException
+     * @override
+     */
     public function getValue(object $object = null): mixed
     {
         // Permissive (to "object must be provided for instance properties" error).
-        if (!$object && is_object($this->reference->class)) {
-            $object = $this->reference->class;
+        if (!$object && is_object($this->reference->target)) {
+            $object = $this->reference->target;
         }
 
         if (!is_object($object)) {
             throw new \ReflectionException(sprintf(
                 'Cannot get property $%s of non-instantiated class %s',
-                $this->reference->name, get_class_name($this->reference->class)
+                $this->reference->name, get_class_name($this->reference->target)
             ));
         }
 
@@ -209,13 +241,25 @@ class ReflectionProperty extends \ReflectionProperty
         return parent::getValue($object);
     }
 
-    /** @override */
+    /**
+     * @override
+     */
     public function getType(): ReflectionType|null
     {
         if ($type = parent::getType()) {
             return ReflectionType::from($type);
         }
         return null;
+    }
+
+    /**
+     * Get types.
+     *
+     * @return array<froq\reflection\ReflectionType>
+     */
+    public function getTypes(): array
+    {
+        return (array) $this->getType()?->getTypes();
     }
 
     /**
@@ -248,7 +292,6 @@ class ReflectionProperty extends \ReflectionProperty
         if ($type = $this->getType()) {
             return $type->isNullable();
         }
-
         return true;
     }
 
@@ -259,22 +302,24 @@ class ReflectionProperty extends \ReflectionProperty
      */
     public function isDynamic(): bool
     {
-        $name = $this->reference->name;
-        $class = $this->reference->class;
+        $name   = $this->reference->name;
+        $target = $this->reference->target;
 
-        if (!is_object($class) || !property_exists($class, $name)) {
+        if (!is_object($target) || !property_exists($target, $name)) {
             return false;
         }
 
-        return !array_key_exists($name, get_class_vars(get_class_name($class)));
+        return !array_key_exists($name, get_class_vars(get_class_name($target)));
     }
 
-    /** @override */
+    /**
+     * @override
+     */
     public function isInitialized(object $object = null): bool
     {
         // Permissive (to "object must be provided for instance properties" error).
-        if (!$object && is_object($this->reference->class)) {
-            $object = $this->reference->class;
+        if (!$object && is_object($this->reference->target)) {
+            $object = $this->reference->target;
         }
 
         return parent::isInitialized($object);

@@ -1,23 +1,21 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-reflection
  */
-declare(strict_types=1);
-
 namespace froq\reflection;
 
 /**
- * A namespace reflection class.
+ * Namespace reflection class.
  *
  * @package froq\reflection
- * @object  froq\reflection\ReflectionNamespace
+ * @class   froq\reflection\ReflectionNamespace
  * @author  Kerem Güneş
  * @since   6.0
  */
 class ReflectionNamespace implements \Reflector
 {
-    /** @var string */
+    /** Namespace name. */
     public readonly string $name;
 
     /**
@@ -28,20 +26,24 @@ class ReflectionNamespace implements \Reflector
      */
     public function __construct(string $name)
     {
-        if ($name !== '' && !preg_match('~^[a-z_][\w\\\]+$~i', $name)) {
+        if ($name !== '' && !preg_test('~^[a-zA-Z_][\w\\\]+$~', $name)) {
             throw new \ReflectionException(sprintf('Invalid namespace: "%s"', $name));
         }
 
         $this->name = trim($name, '\\');
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __debugInfo(): array
     {
         return ['name' => $this->name];
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __toString(): string
     {
         return sprintf('Namespace [ %s ]', $this->name);
@@ -209,7 +211,8 @@ class ReflectionNamespace implements \Reflector
     private function filterNames(array $names): array
     {
         $namespace = ltrim($this->name, '\\') . '\\';
-        return array_filter_list($names, fn($name) => str_starts_with($name, $namespace));
+
+        return array_filter_list($names, fn(string $name): bool => str_starts_with($name, $namespace));
     }
 
     /**
@@ -217,6 +220,6 @@ class ReflectionNamespace implements \Reflector
      */
     private function mapNames(array $names, string $class): array
     {
-        return array_map(fn($name) => new $class($name), $names);
+        return array_apply($names, fn(string $name): \Reflector => new $class($name));
     }
 }

@@ -1,17 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-reflection
  */
-declare(strict_types=1);
-
 namespace froq\reflection;
 
 /**
- * Kind of missing reflection class.
+ * A kind of missing reflection class.
  *
  * @package froq\reflection
- * @object  froq\reflection\ReflectionTrait
+ * @class   froq\reflection\ReflectionTrait
  * @author  Kerem Güneş
  * @since   5.31, 6.0
  */

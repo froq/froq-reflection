@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-reflection
  */
-declare(strict_types=1);
-
 namespace froq\reflection\internal\reflector;
 
 use froq\reflection\ReflectionClassConstant;
@@ -14,7 +12,7 @@ use Set;
  * Class constant reflector class.
  *
  * @package froq\reflection\internal\reflector
- * @object  froq\reflection\internal\reflector\ClassConstantReflector
+ * @class   froq\reflection\internal\reflector\ClassConstantReflector
  * @author  Kerem Güneş
  * @since   6.0
  * @internal
@@ -28,8 +26,7 @@ class ClassConstantReflector extends Reflector
      */
     public function constants(): Set
     {
-        return (new Set($this->getConstantNames()))
-            ->map(fn($name) => $this->convert($name));
+        return new Set($this->getConstants());
     }
 
     /**
@@ -40,16 +37,10 @@ class ClassConstantReflector extends Reflector
      */
     public function hasOwnConstant(string $name): bool
     {
-        // @keep: why?
-        // if (!$this->ref->hasConstant($name)) {
-        //     return false;
-        // }
-
-        // Can be declared in an interface.
-        if ($this->ref->name != $this->getConstant($name)?->getDeclaringClass()->name) {
+        // Can be declared in an interface or trait.
+        if ($this->reflector->name !== $this->getConstant($name)?->getDeclaringClass()->name) {
             return false;
         }
-
         return true;
     }
 
@@ -76,7 +67,11 @@ class ClassConstantReflector extends Reflector
      */
     public function getConstants(int $filter = null): array
     {
-        return array_map([$this, 'convert'], $this->getConstantNames($filter));
+        return array_apply(
+            $this->collect($filter),
+            fn($_, string $name): ReflectionClassConstant => $this->convert($name),
+            list: true
+        );
     }
 
     /**
@@ -107,7 +102,7 @@ class ClassConstantReflector extends Reflector
      */
     private function collect(int $filter = null): array
     {
-        $ref = new \ReflectionClass($this->ref->name);
+        $ref = new \ReflectionClass($this->reflector->name);
 
         return $ref->getConstants($filter);
     }
@@ -117,6 +112,6 @@ class ClassConstantReflector extends Reflector
      */
     private function convert(string $name): ReflectionClassConstant
     {
-        return new ReflectionClassConstant($this->ref->name, $name);
+        return new ReflectionClassConstant($this->reflector->name, $name);
     }
 }

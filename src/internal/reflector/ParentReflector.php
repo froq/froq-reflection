@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-reflection
  */
-declare(strict_types=1);
-
 namespace froq\reflection\internal\reflector;
 
 use froq\reflection\ReflectionClass;
@@ -15,7 +13,7 @@ use Set;
  * Parent (class) reflector class.
  *
  * @package froq\reflection\internal\reflector
- * @object  froq\reflection\internal\reflector\ParentReflector
+ * @class   froq\reflection\internal\reflector\ParentReflector
  * @author  Kerem Güneş
  * @since   6.0
  * @internal
@@ -29,8 +27,20 @@ class ParentReflector extends Reflector
      */
     public function parents(): Set
     {
-        return (new Set($this->getParentNames()))
-            ->map(fn($name) => new ReflectionClass($name));
+        return new Set($this->getParents());
+    }
+
+    /**
+     * Check parent existence.
+     *
+     * @return bool
+     */
+    public function hasParent(): bool
+    {
+        if ($this->getParentName()) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -41,9 +51,10 @@ class ParentReflector extends Reflector
      */
     public function getParent(bool $baseOnly = false): ReflectionClass|null
     {
-        $ret = $this->getParentName($baseOnly);
-
-        return $ret ? new ReflectionClass($ret) : null;
+        if ($name = $this->getParentName($baseOnly)) {
+            return $this->convert($name);
+        }
+        return null;
     }
 
     /**
@@ -53,20 +64,29 @@ class ParentReflector extends Reflector
      */
     public function getParents(): array
     {
-        $ret = $this->getParentNames();
-
-        return $ret ? array_map(fn($name) => new ReflectionClass($name), $ret) : $ret;
+        return array_apply(
+            $this->getParentNames(),
+            fn(string $name): ReflectionClass => $this->convert($name)
+        );
     }
 
     /**
      * Get parent name.
      *
      * @param  bool $baseOnly
-     * @return string
+     * @return string|null
      */
-    public function getParentName(bool $baseOnly = false): string
+    public function getParentName(bool $baseOnly = false): string|null
     {
-        return (string) Objects::getParent($this->ref->name, $baseOnly);
+        $name = Objects::getParent($this->reflector->name, $baseOnly);
+
+        // Since get_parent_class() doesn't provide.
+        if (!$name && $this->reflector->isInterface()) {
+            $names = class_implements($this->reflector->name);
+            $names && $name = $baseOnly ? array_last($names) : array_first($names);
+        }
+
+        return $name;
     }
 
     /**
@@ -76,6 +96,22 @@ class ParentReflector extends Reflector
      */
     public function getParentNames(): array
     {
-        return (array) Objects::getParents($this->ref->name);
+        $names = Objects::getParents($this->reflector->name);
+
+        // Since get_parent_class() doesn't provide.
+        if (!$names && $this->reflector->isInterface()) {
+            $names = class_implements($this->reflector->name);
+            $names && $names = array_list($names);
+        }
+
+        return $names;
+    }
+
+    /**
+     * Convert parents to instances.
+     */
+    private function convert(string $name): ReflectionClass
+    {
+        return new ReflectionClass($name);
     }
 }

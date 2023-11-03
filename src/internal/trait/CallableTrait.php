@@ -1,17 +1,14 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-reflection
  */
-declare(strict_types=1);
-
 namespace froq\reflection\internal\trait;
 
 use froq\reflection\{Reflection, ReflectionCallable, ReflectionClass, ReflectionParameter,
-    ReflectionInterface, ReflectionTrait, ReflectionType};
+    ReflectionInterface, ReflectionTrait, ReflectionAttribute, ReflectionType};
 use froq\reflection\internal\reflector\{AttributeReflector, InterfaceReflector, TraitReflector,
     ParameterReflector};
-use ReflectionAttribute;
 use Set;
 
 /**
@@ -19,81 +16,52 @@ use Set;
  * `ReflectionFunction` classes.
  *
  * @package froq\reflection\internal\trait
- * @object  froq\reflection\internal\trait\CallableTrait
+ * @class   froq\reflection\internal\trait\CallableTrait
  * @author  Kerem Güneş
  * @since   5.27, 6.0
  * @internal
  */
 trait CallableTrait
 {
-    /** Method/function reference. */
-    public object $reference;
-
     /**
-     * Constructor.
-     *
-     * @param  string|callable|array|object $callable
-     * @param  string|null                  $name
+     * @magic
      */
-    public function __construct(string|callable|array|object $callable, string $name = null)
-    {
-        // When "Foo::bar" given (not "Foo.bar" cos of anonymous classes (eg: ".../foo.php:123$0")).
-        if (is_string($callable) && preg_match('~(.+)::(\w+)~', $callable, $match)) {
-            $callable = array_slice($match, 1);
-        } elseif ($name !== null && (is_string($callable) || is_object($callable))) {
-            $callable = [$callable, $name];
-        }
-
-        $this->reference = (object) [
-            'callable'   => $callable,
-            'reflection' => is_array($callable) ? new \ReflectionMethod(...$callable)
-                : new \ReflectionFunction($callable),
-        ];
-
-        // Call super constructor.
-        if (!$this instanceof ReflectionCallable) {
-            is_array($callable) ? parent::__construct(...$callable)
-                : parent::__construct($callable);
-        }
-    }
-
-    /** @magic */
     public function __debugInfo(): array
     {
         if ($this->reference->reflection instanceof \ReflectionMethod) {
-            return ['name' => $this->reference->reflection->name,
+            return ['name'  => $this->reference->reflection->name,
                     'class' => $this->reference->reflection->class];
         }
+
         return ['name' => $this->reference->reflection->name];
     }
 
     /**
      * Get class.
      *
-     * @return string
-     * @throws ReflectionException
+     * @return string|null
      */
-    public function getClass(): string
+    public function getClass(): string|null
     {
         if ($this->reference->reflection instanceof \ReflectionMethod) {
             return $this->reference->reflection->class;
         }
 
-        throw new \ReflectionException(sprintf(
-            'Invalid call as %s::getClass()', $this::class
-        ));
+        return null;
     }
 
     /**
      * Get declaring class.
      *
-     * @return froq\reflection\{ReflectionClass|ReflectionTrait|ReflectionInterface}
-     * @throws ReflectionException
+     * @return froq\reflection\{ReflectionClass|ReflectionTrait|ReflectionInterface}|null
+     * @override ReflectionMethod.getDeclaringClass()
      */
-    public function getDeclaringClass(): ReflectionClass|ReflectionTrait|ReflectionInterface
+    #[\ReturnTypeWillChange]
+    public function getDeclaringClass(): ReflectionClass|ReflectionTrait|ReflectionInterface|null
     {
         if ($this->reference->reflection instanceof \ReflectionMethod) {
             $ref = $this->reference->reflection->getDeclaringClass();
+
             return match (true) {
                 default => new ReflectionClass($ref->name),
                 $ref->isTrait() => new ReflectionTrait($ref->name),
@@ -101,15 +69,13 @@ trait CallableTrait
             };
         }
 
-        throw new \ReflectionException(sprintf(
-            'Invalid call as %s::getDeclaringClass()', $this::class
-        ));
+        return null;
     }
 
     /**
      * Set of attributes.
      *
-     * @return Set<ReflectionAttribute>
+     * @return Set<froq\reflection\ReflectionAttribute>
      */
     public function attributes(): Set
     {
@@ -131,11 +97,24 @@ trait CallableTrait
      * Get attribute.
      *
      * @param  string $name
-     * @return ReflectionAttribute|null
+     * @return froq\reflection\ReflectionAttribute|null
      */
     public function getAttribute(string $name): ReflectionAttribute|null
     {
         return (new AttributeReflector($this))->getAttribute($name);
+    }
+
+    /**
+     * Get attributes.
+     *
+     * @param  string|null $name
+     * @param  int|null    $flags
+     * @return array<froq\reflection\ReflectionAttribute>
+     * @override
+     */
+    public function getAttributes(string $name = null, int $flags = null): array
+    {
+        return (new AttributeReflector($this))->getAttributes($name, $flags);
     }
 
     /**
@@ -345,12 +324,24 @@ trait CallableTrait
         return Reflection::getModifierNames($this->getModifiers());
     }
 
-    /** @override */
+    /**
+     * @override
+     */
     public function getReturnType(): ReflectionType|null
     {
         if ($type = $this->reference->reflection->getReturnType()) {
             return ReflectionType::from($type);
         }
         return null;
+    }
+
+    /**
+     * Get return types.
+     *
+     * @return array<froq\reflection\ReflectionType>
+     */
+    public function getReturnTypes(): array
+    {
+        return (array) $this->getReturnType()?->getTypes();
     }
 }
