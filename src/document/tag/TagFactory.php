@@ -5,8 +5,6 @@
  */
 namespace froq\reflection\document\tag;
 
-use froq\reflection\document\tag\parser\TagParser;
-
 /**
  * Tag factory.
  *
@@ -24,7 +22,7 @@ class TagFactory
     private string $body;
 
     /** Parser instance. */
-    private TagParser $parser;
+    private parser\TagParser $parser;
 
     /** Map of tag classes. */
     private static array $map;
@@ -40,7 +38,7 @@ class TagFactory
         isset($id)   && $this->withId($id);
         isset($body) && $this->withBody($body);
 
-        $this->parser = new TagParser();
+        $this->parser = new parser\TagParser();
 
         self::$map ??= $this->generateMap();
     }
@@ -54,6 +52,7 @@ class TagFactory
     public function withId(string $id): self
     {
         $this->id = lower($id);
+
         return $this;
     }
 
@@ -66,6 +65,7 @@ class TagFactory
     public function withBody(string $body): self
     {
         $this->body = trim($body);
+
         return $this;
     }
 
@@ -73,6 +73,7 @@ class TagFactory
      * Create.
      *
      * @return Tag|TagList
+     * @throws Exception
      */
     public function create(): Tag|TagList
     {
