@@ -300,11 +300,10 @@ class TagParser
 
         // Add type.
         if (!empty($values[0])) {
-            $version   = $values[0];
+            $version  = $values[0];
             $values[] = (
                 $version[0] === '$' ? 'CVS' : (
-                    $version[0] === '@' ? 'PEAR'
-                        : 'SEMVER'
+                    $version[0] === '@' ? 'PEAR' : 'SEMVER'
                 )
             );
 
@@ -324,6 +323,7 @@ class TagParser
     private function extract(string $pattern, string $body, int $pad = 0): array
     {
         preg_match($pattern, $body, $match, PREG_UNMATCHED_AS_NULL);
+
         return array_pad(array_slice($match, 1), $pad, null);
     }
 
@@ -335,11 +335,16 @@ class TagParser
         $values = array_apply($values, fn(mixed $value): mixed => (
             $value !== null && $value !== '' ? $value : null
         ));
+
         return array_combine($keys, $values);
     }
 
+    /**
+     * Get a method for given ID.
+     */
     private function getMethodFor(string $id): string
     {
+        // A defined method here.
         if (isset(self::$map[$id])) {
             return 'parse' . ucfirst($id);
         }
@@ -359,15 +364,18 @@ class TagParser
     private function generateMap(): array
     {
         $ret = [];
+        $ref = new \XReflectionClass(TagPattern::class);
 
-        foreach (get_class_constants(TagPattern::class, false) as $name => $_) {
+        foreach ($ref->getConstantNames() as $name) {
             $id = lower($name);
 
+            // Make up.
             if ($id === 'class_') {
                 $id = 'class';
             }
 
-            $ret[$id] = true;
+            // Tick.
+            $ret[$id] = 1;
         }
 
         return $ret;
