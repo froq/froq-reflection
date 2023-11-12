@@ -60,20 +60,20 @@ class ReflectionNamespace implements \Reflector
     }
 
     /**
-     * Get basename.
+     * Get base name.
      *
      * @return string
      */
-    public function getBasename(): string
+    public function getBaseName(): string
     {
-        return substr($this->name, 0, strpos($this->name, '\\') ?: strlen($this->name));
+        return strcut($this->name, strpos($this->name, '\\') ?: strlen($this->name));
     }
 
     /**
      * Check class by name.
      *
      * @param  string $name
-     * @return froq\reflection\ReflectionClass|null
+     * @return bool
      */
     public function hasClass(string $name): bool
     {
@@ -200,7 +200,7 @@ class ReflectionNamespace implements \Reflector
      */
     private function normalizeName(string &$name): string
     {
-        return $name = $this->name . '\\' . ltrim($name, '\\');
+        return $name = ($this->name . '\\' . ltrim($name, '\\'));
     }
 
     /**
@@ -212,7 +212,10 @@ class ReflectionNamespace implements \Reflector
     {
         $namespace = ltrim($this->name, '\\') . '\\';
 
-        return array_filter_list($names, fn(string $name): bool => str_starts_with($name, $namespace));
+        return array_filter_list(
+            $names,
+            fn(string $name): bool => strpfx($name, $namespace)
+        );
     }
 
     /**
@@ -220,6 +223,9 @@ class ReflectionNamespace implements \Reflector
      */
     private function mapNames(array $names, string $class): array
     {
-        return array_apply($names, fn(string $name): \Reflector => new $class($name));
+        return array_apply(
+            $names,
+            fn(string $name): \Reflector => new $class($name)
+        );
     }
 }
