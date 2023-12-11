@@ -227,6 +227,11 @@ class ReflectionProperty extends \ReflectionProperty
         }
 
         if (!is_object($object)) {
+            // Try a last chance.
+            if ($this->hasDefaultValue()) {
+                return $this->getDefaultValue();
+            }
+
             throw new \ReflectionException(sprintf(
                 'Cannot get property $%s of non-instantiated class %s',
                 $this->reference->name, get_class_name($this->reference->target)
