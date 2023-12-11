@@ -283,7 +283,7 @@ class ReflectionProperty extends \ReflectionProperty
     }
 
     /**
-     * Check whether property is nullable.
+     * Check if property is nullable.
      *
      * @return bool
      */
@@ -296,20 +296,23 @@ class ReflectionProperty extends \ReflectionProperty
     }
 
     /**
-     * Check whether property is dynamic.
+     * Check if property is dynamic.
      *
      * @return bool
      */
     public function isDynamic(): bool
     {
-        $name   = $this->reference->name;
-        $target = $this->reference->target;
+        return !parent::isDefault();
 
-        if (!is_object($target) || !property_exists($target, $name)) {
-            return false;
-        }
+        // @cancel: Use simply isDefault().
+        // $name   = $this->reference->name;
+        // $target = $this->reference->target;
 
-        return !array_key_exists($name, get_class_vars(get_class_name($target)));
+        // if (!is_object($target) || !property_exists($target, $name)) {
+        //     return false;
+        // }
+
+        // return !array_key_exists($name, get_class_vars(get_class_name($target)));
     }
 
     /**
