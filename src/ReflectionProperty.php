@@ -299,6 +299,7 @@ class ReflectionProperty extends \ReflectionProperty
      * Check if property is dynamic.
      *
      * @return bool
+     * @missing
      */
     public function isDynamic(): bool
     {
@@ -320,7 +321,12 @@ class ReflectionProperty extends \ReflectionProperty
      */
     public function isInitialized(object $object = null): bool
     {
-        // Permissive (to "object must be provided for instance properties" error).
+        // Permissive (for "non-object" reflected classes).
+        if (!$object && !is_object($this->reference->target)) {
+            return parent::hasDefaultValue();
+        }
+
+        // Permissive (for "object must be provided for instance properties" error).
         if (!$object && is_object($this->reference->target)) {
             $object = $this->reference->target;
         }
