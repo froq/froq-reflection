@@ -148,7 +148,7 @@ class ReflectionType extends \ReflectionType implements \Reflector
     /**
      * Get names.
      *
-     * @return array
+     * @return array<string>
      */
     public function getNames(): array
     {
