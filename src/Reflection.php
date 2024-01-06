@@ -5,6 +5,8 @@
  */
 namespace froq\reflection;
 
+use froq\util\Objects;
+
 /**
  * Reflection utility class.
  *
@@ -16,18 +18,56 @@ namespace froq\reflection;
 class Reflection extends \Reflection
 {
     /**
-     * Get visibility (for class constants, methods and property reflections).
+     * Get type of given reflector.
+     *
+     * @param  Reflector $reflector
+     * @return string|null
+     */
+    public static function getType(\Reflector $reflector): string|null
+    {
+        if ($reflector instanceof \ReflectionClass) {
+            if ($reflector instanceof \ReflectionObject) {
+                return 'object';
+            }
+
+            // Detect: class, interface, trait or enum.
+            return Objects::getType($reflector->getName());
+        }
+
+        return match (true) {
+            $reflector instanceof ReflectionAttribute,
+            $reflector instanceof \ReflectionAttribute     => 'attribute',
+            $reflector instanceof ReflectionCallable       => 'callable',
+            $reflector instanceof \ReflectionClassConstant => 'class-constant',
+            $reflector instanceof \ReflectionMethod        => 'method',
+            $reflector instanceof \ReflectionFunction      => 'function',
+            $reflector instanceof ReflectionNamespace      => 'namespace',
+            $reflector instanceof \ReflectionParameter     => 'parameter',
+            $reflector instanceof \ReflectionProperty      => 'property',
+            $reflector instanceof \ReflectionType          => 'type',
+            default                                        => null,
+        };
+    }
+
+    /**
+     * Get visibility (for class constant, property, method reflections).
      *
      * @return Reflector $reflector
-     * @return string
+     * @return string|null
      */
-    public static function getVisibility(\Reflector $reflector): string
+    public static function getVisibility(\Reflector $reflector): string|null
     {
-        return match (true) {
-            $reflector->isPublic()  => 'public',
-            $reflector->isPrivate() => 'private',
-            default                 => 'protected'
-        };
+        if ($reflector instanceof \ReflectionClassConstant ||
+            $reflector instanceof \ReflectionProperty ||
+            $reflector instanceof \ReflectionMethod) {
+            return match (true) {
+                $reflector->isPublic()  => 'public',
+                $reflector->isPrivate() => 'private',
+                default                 => 'protected'
+            };
+        }
+
+        return null;
     }
 
     /**
