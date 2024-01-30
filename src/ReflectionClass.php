@@ -48,7 +48,7 @@ class ReflectionClass extends \ReflectionClass
 
         $ref = new \ReflectionClass($this->name);
 
-        return $arguments ? $ref->newInstanceArgs($arguments)
+        return $arguments ? $ref->newInstance(...$arguments)
                           : $ref->newInstanceWithoutConstructor();
     }
 }
