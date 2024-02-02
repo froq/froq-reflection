@@ -150,9 +150,9 @@ class ReflectionParameter extends \ReflectionParameter
     /**
      * @override
      */
-    public function getDefaultValue(): mixed
+    public function getDefaultValue(mixed $default = null): mixed
     {
-        return $this->hasDefaultValue() ? parent::getDefaultValue() : null;
+        return $this->hasDefaultValue() ? parent::getDefaultValue() : $default;
     }
 
     /**

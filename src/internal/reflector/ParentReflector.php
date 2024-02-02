@@ -46,12 +46,12 @@ class ParentReflector extends Reflector
     /**
      * Get parent.
      *
-     * @param  bool $baseOnly
+     * @param  bool $top
      * @return froq\reflection\ReflectionClass|null
      */
-    public function getParent(bool $baseOnly = false): ReflectionClass|null
+    public function getParent(bool $top = false): ReflectionClass|null
     {
-        if ($name = $this->getParentName($baseOnly)) {
+        if ($name = $this->getParentName($top)) {
             return $this->convert($name);
         }
         return null;
@@ -73,17 +73,17 @@ class ParentReflector extends Reflector
     /**
      * Get parent name.
      *
-     * @param  bool $baseOnly
+     * @param  bool $top
      * @return string|null
      */
-    public function getParentName(bool $baseOnly = false): string|null
+    public function getParentName(bool $top = false): string|null
     {
-        $name = Objects::getParent($this->reflector->name, $baseOnly);
+        $name = Objects::getParent($this->reflector->name, $top);
 
         // Since get_parent_class() doesn't provide.
         if (!$name && $this->reflector->isInterface()) {
             $names = class_implements($this->reflector->name);
-            $names && $name = $baseOnly ? array_last($names) : array_first($names);
+            $names && $name = $top ? array_last($names) : array_first($names);
         }
 
         return $name;

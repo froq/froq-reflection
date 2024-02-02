@@ -267,6 +267,14 @@ class ReflectionType extends \ReflectionType implements \Reflector
     }
 
     /**
+     * @alias isBuiltin()
+     */
+    public function isPrimitive(): bool
+    {
+        return $this->isBuiltin();
+    }
+
+    /**
      * @alias isNullable()
      * @override
      */

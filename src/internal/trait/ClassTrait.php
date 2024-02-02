@@ -95,6 +95,19 @@ trait ClassTrait
     }
 
     /**
+     * Get constructor.
+     *
+     * @return froq\reflection\ReflectionMethod|null
+     * @override
+     */
+    public function getConstructor(): ReflectionMethod|null
+    {
+        $ref = parent::getConstructor();
+
+        return $ref ? new ReflectionMethod($ref->class, $ref->name) : null;
+    }
+
+    /**
      * Set of parents.
      *
      * @return Set<froq\reflection\ReflectionClass>
@@ -117,12 +130,12 @@ trait ClassTrait
     /**
      * Get parent.
      *
-     * @param  bool $baseOnly
+     * @param  bool $top
      * @return froq\reflection\ReflectionClass|null
      */
-    public function getParent(bool $baseOnly = false): ReflectionClass|null
+    public function getParent(bool $top = false): ReflectionClass|null
     {
-        return (new ParentReflector($this))->getParent($baseOnly);
+        return (new ParentReflector($this))->getParent($top);
     }
 
     /**
@@ -138,12 +151,12 @@ trait ClassTrait
     /**
      * Get parent name.
      *
-     * @param  bool $baseOnly
+     * @param  bool $top
      * @return string|null
      */
-    public function getParentName(bool $baseOnly = false): string|null
+    public function getParentName(bool $top = false): string|null
     {
-        return (new ParentReflector($this))->getParentName($baseOnly);
+        return (new ParentReflector($this))->getParentName($top);
     }
 
     /**
@@ -159,14 +172,14 @@ trait ClassTrait
     /**
      * Get parent class.
      *
-     * @param  bool $baseOnly
+     * @param  bool $top
      * @return froq\reflection\ReflectionClass|null
      * @override
      */
     #[\ReturnTypeWillChange]
-    public function getParentClass(bool $baseOnly = false): ReflectionClass|null
+    public function getParentClass(bool $top = false): ReflectionClass|null
     {
-        return $this->getParent($baseOnly);
+        return $this->getParent($top);
     }
 
     /**
@@ -585,7 +598,7 @@ trait ClassTrait
 
         if ($check && !trait_exists($name)) {
             $message = match (true) {
-                default => 'Trait "%s" does not exist',
+                default => 'Trait %s does not exist',
                 class_exists($name) => '%s is not a trait, it is a class',
                 interface_exists($name) => '%s is not a trait, it is an interface',
             };
@@ -610,7 +623,7 @@ trait ClassTrait
 
         if ($check && !class_exists($name)) {
             $message = match (true) {
-                default => 'Class "%s" does not exist',
+                default => 'Class %s does not exist',
                 trait_exists($name) => '%s is not a class, it is a trait',
                 interface_exists($name) => '%s is not a class, it is an interface',
             };
