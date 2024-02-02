@@ -63,6 +63,7 @@ class ReflectionParameter extends \ReflectionParameter
      * @return string|null
      * @override
      */
+    #[\ReturnTypeWillChange]
     public function getClass(): string|null
     {
         return parent::getDeclaringClass()?->name;
