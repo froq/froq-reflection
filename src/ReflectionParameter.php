@@ -63,7 +63,6 @@ class ReflectionParameter extends \ReflectionParameter
      * @return string|null
      * @override
      */
-    #[\ReturnTypeWillChange]
     public function getClass(): string|null
     {
         return parent::getDeclaringClass()?->name;
@@ -141,13 +140,13 @@ class ReflectionParameter extends \ReflectionParameter
      */
     public function hasDefaultValue(): bool
     {
-        return $this->isOptional() && !$this->isVariadic();
+        // @cancel: Same results.
+        // return $this->isOptional() && !$this->isVariadic();
+
+        return parent::isDefaultValueAvailable();
     }
 
     /**
-     * Get default value return null.
-     *
-     * @return mixed
      * @override
      */
     public function getDefaultValue(): mixed
