@@ -46,9 +46,9 @@ class ReflectionClass extends \ReflectionClass
             'Cannot initialize %s %s', $this->getType(), $this->getName()
         ));
 
-        $ref = new \ReflectionClass($this->name);
+        $ref = new \ReflectionClass($this->reference->target);
 
-        return $arguments ? $ref->newInstance(...$arguments)
-                          : $ref->newInstanceWithoutConstructor();
+        return ($arguments && $ref->hasMethod('__construct'))
+             ? $ref->newInstance(...$arguments) : $ref->newInstanceWithoutConstructor();
     }
 }

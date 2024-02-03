@@ -274,16 +274,6 @@ trait CallableTrait
     }
 
     /**
-     * Get parameters count.
-     *
-     * @return int
-     */
-    public function getParametersCount(): int
-    {
-        return $this->getNumberOfParameters();
-    }
-
-    /**
      * Get parameter names.
      *
      * @return array<string>
@@ -302,6 +292,26 @@ trait CallableTrait
     public function getParameterValues(bool $assoc = false): array
     {
         return (new ParameterReflector($this))->getParameterValues($assoc);
+    }
+
+    /**
+     * Get parameters count.
+     *
+     * @return int
+     */
+    public function getParametersCount(): int
+    {
+        return $this->getNumberOfParameters();
+    }
+
+    /**
+     * Get required parameters count.
+     *
+     * @return int
+     */
+    public function getRequiredParametersCount(): int
+    {
+        return $this->getNumberOfRequiredParameters();
     }
 
     /**

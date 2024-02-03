@@ -95,6 +95,17 @@ trait ClassTrait
     }
 
     /**
+     * Has constructor.
+     *
+     * @return bool
+     * @missing
+     */
+    public function hasConstructor(): bool
+    {
+        return parent::hasMethod('__construct');
+    }
+
+    /**
      * Get constructor.
      *
      * @return froq\reflection\ReflectionMethod|null
@@ -102,9 +113,7 @@ trait ClassTrait
      */
     public function getConstructor(): ReflectionMethod|null
     {
-        $ref = parent::getConstructor();
-
-        return $ref ? new ReflectionMethod($ref->class, $ref->name) : null;
+        return ($ref = parent::getConstructor()) ? new ReflectionMethod($ref->class, $ref->name) : null;
     }
 
     /**
