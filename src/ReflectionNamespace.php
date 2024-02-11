@@ -5,6 +5,8 @@
  */
 namespace froq\reflection;
 
+use Map;
+
 /**
  * Namespace reflection class.
  *
@@ -26,7 +28,7 @@ class ReflectionNamespace implements \Reflector
      */
     public function __construct(string $name)
     {
-        if ($name !== '' && !preg_test('~^[a-zA-Z_][\w\\\]+$~', $name)) {
+        if ($name !== '' && !preg_test('~^\\\?[a-zA-Z_][\w\\\]+$~', $name)) {
             throw new \ReflectionException(sprintf('Invalid namespace: "%s"', $name));
         }
 
@@ -67,6 +69,20 @@ class ReflectionNamespace implements \Reflector
     public function getBaseName(): string
     {
         return strcut($this->name, strpos($this->name, '\\') ?: strlen($this->name));
+    }
+
+    /**
+     * Map of classes.
+     *
+     * @return Map<froq\reflection\ReflectionClass>
+     */
+    public function classes(): Map
+    {
+        return Map::from($this->getClasses())->forEach(
+            fn(ReflectionClass $ref, string $key, Map $map) => (
+                $map->replaceKey($key, $ref->name, $ref)
+            )
+        );
     }
 
     /**
@@ -112,6 +128,20 @@ class ReflectionNamespace implements \Reflector
     }
 
     /**
+     * Map of interfaces.
+     *
+     * @return Map<froq\reflection\ReflectionInterface>
+     */
+    public function interfaces(): Map
+    {
+        return Map::from($this->getInterfaces())->forEach(
+            fn(ReflectionInterface $ref, string $key, Map $map) => (
+                $map->replaceKey($key, $ref->name, $ref)
+            )
+        );
+    }
+
+    /**
      * Check interface by name.
      *
      * @param  string $name
@@ -151,6 +181,20 @@ class ReflectionNamespace implements \Reflector
     public function getInterfaceNames(): array
     {
         return $this->filterNames(get_declared_interfaces());
+    }
+
+    /**
+     * Map of traits.
+     *
+     * @return Map<froq\reflection\ReflectionTrait>
+     */
+    public function traits(): Map
+    {
+        return Map::from($this->getTraits())->forEach(
+            fn(ReflectionTrait $ref, string $key, Map $map) => (
+                $map->replaceKey($key, $ref->name, $ref)
+            )
+        );
     }
 
     /**
@@ -210,7 +254,12 @@ class ReflectionNamespace implements \Reflector
      */
     private function filterNames(array $names): array
     {
-        $namespace = ltrim($this->name, '\\') . '\\';
+        // Globals.
+        $namespace = '';
+
+        if ($this->name !== '') {
+            $namespace = ltrim($this->name, '\\') . '\\';
+        }
 
         return array_filter_list(
             $names,
