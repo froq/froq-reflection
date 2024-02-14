@@ -71,6 +71,94 @@ class Reflection extends \Reflection
     }
 
     /**
+     * Reflect (for object, class, class constant, property, method, function, trait, interface
+     * and namespace targets).
+     *
+     * @param  string|object $target
+     * @param  string|null   $type
+     * @return Reflector|null
+     * @throws ArgumentError
+     */
+    public static function reflect(string|object $target, string $type = null): \Reflector|null
+    {
+        if (is_object($target)) {
+            return new ReflectionObject($target);
+        }
+
+        $skip = false;
+
+        // Blind tries.
+        if ($type === null) {
+            if (class_exists($target)) {
+                return new ReflectionClass($target);
+            }
+            if (function_exists($target)) {
+                return new ReflectionFunction($target);
+            }
+
+            // Eg: Foo@bar or Foo::bar
+            if (str_has($target, ['@', '::'])) {
+                [$class, $member] = str_pop($target, ['@', '::'], 2);
+
+                if (isset($class, $member)) {
+                    // Match by check.
+                    $match = match (true) {
+                        constant_exists($class, $member) => $type = 'constant',
+                        property_exists($class, $member) => $type = 'property',
+                        method_exists($class, $member)   => $type = 'method',
+                        default                          => null,
+                    };
+
+                    $target = join('::', [$class, $member]);
+                    $skip   = true;
+                }
+            }
+        }
+
+        // Type tries.
+        if ($type !== null && !$skip) {
+            switch ($type) {
+                case 'class':
+                    return new ReflectionClass($target);
+                case 'function':
+                    return new ReflectionFunction($target);
+
+                case 'trait':
+                    return new ReflectionTrait($target);
+                case 'interface':
+                    return new ReflectionInterface($target);
+                case 'namespace':
+                    return new ReflectionNamespace($target);
+
+                case 'callable':
+                    return new ReflectionCallable($target);
+            }
+        }
+
+        if ($type !== null) {
+            switch ($type) {
+                case 'constant':
+                case 'class-constant':
+                    return new ReflectionClassConstant($target);
+                case 'property':
+                case 'class-property':
+                    return new ReflectionProperty($target);
+                case 'method':
+                case 'class-method':
+                    return new ReflectionMethod($target);
+                case 'class-namespace':
+                    $target = get_class_namespace($target);
+                    return new ReflectionNamespace($target);
+
+                default:
+                    throw new \ArgumentError('Invalid type: %q', $type);
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Shortcut for creating ReflectionCallable instances.
      */
     public static function reflectCallable(...$args): ReflectionCallable
