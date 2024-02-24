@@ -284,7 +284,7 @@ trait CallableTrait
     }
 
     /**
-     * Get parameter (default) values.
+     * Get parameter values.
      *
      * @param  bool $assoc
      * @return array<mixed>
@@ -292,6 +292,28 @@ trait CallableTrait
     public function getParameterValues(bool $assoc = false): array
     {
         return (new ParameterReflector($this))->getParameterValues($assoc);
+    }
+
+    /**
+     * Get parameter values.
+     *
+     * @param  int|string|array|null $skip
+     * @return array
+     */
+    public function getParameterDefaults(int|string|array $skip = null): array
+    {
+        $skip = (array) $skip;
+
+        foreach ($this->getParameters() as $i => $parameter) {
+            // Skip a name or index of parameter.
+            if ($skip && in_array($parameter->name, $skip) || in_array($i, $skip)) {
+                continue;
+            }
+
+            $ret[$parameter->name] = $parameter->getDefaultValue();
+        }
+
+        return $ret ?? [];
     }
 
     /**
