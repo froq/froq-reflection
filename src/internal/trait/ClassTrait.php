@@ -200,6 +200,22 @@ trait ClassTrait
     }
 
     /**
+     * @alias getParentName()
+     */
+    public function getParentClassName(bool $top = false): string|null
+    {
+        return $this->getParentName($top);
+    }
+
+    /**
+     * @alias getParentNames()
+     */
+    public function getParentClassNames(): array
+    {
+        return $this->getParentNames();
+    }
+
+    /**
      * Set of attributes.
      *
      * @return Set<froq\reflection\ReflectionAttribute>

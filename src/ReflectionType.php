@@ -8,7 +8,7 @@ namespace froq\reflection;
 use froq\reflection\internal\trait\ReferenceTrait;
 use froq\reflection\internal\reference\TypeReference;
 use froq\util\Objects;
-use RegExp;
+use Set, RegExp;
 
 /**
  * A reflection class, combines `ReflectionNamedType`, `ReflectionUnionType`
@@ -33,8 +33,8 @@ class ReflectionType extends \ReflectionType implements \Reflector
     public function __construct(string $name, bool $nullable = false)
     {
         $name = trim($name);
-        if ($name === '') {
-            throw new \ReflectionException('Invalid name');
+        if ($name === '' || $name === '?') {
+            throw new \ReflectionException('Invalid name: ' . $name);
         }
 
         $name = xstring($name)->trim('\\');
@@ -55,7 +55,7 @@ class ReflectionType extends \ReflectionType implements \Reflector
             $name->append('|null');
         }
 
-        $delimiter = $name->contains('|') ? '|' : '&';
+        $delimiter = $name->includes('|') ? '|' : '&';
 
         $names = $name->xsplit($delimiter)->unique();
         $name  = $names->xjoin($delimiter);
@@ -163,7 +163,7 @@ class ReflectionType extends \ReflectionType implements \Reflector
     public function getTypes(): array
     {
         return $this->reference->names->copy()
-            ->apply(fn(string $name): ReflectionType => new ReflectionType($name))
+            ->map(fn(string $name): ReflectionType => new ReflectionType($name))
             ->toArray();
     }
 
@@ -174,7 +174,8 @@ class ReflectionType extends \ReflectionType implements \Reflector
      */
     public function isNamed(): bool
     {
-        return ($count = $this->count()) === 1 || ($count === 2 && $this->isNullable());
+        return ($this->count() === 1)
+            || ($this->count() === 2 && $this->isNullable());
     }
 
     /**
@@ -184,7 +185,8 @@ class ReflectionType extends \ReflectionType implements \Reflector
      */
     public function isUnion(): bool
     {
-        return !$this->isNamed() && $this->reference->name->contains('|');
+        return !$this->isNamed()
+            && $this->reference->name->includes('|');
     }
 
     /**
@@ -194,7 +196,8 @@ class ReflectionType extends \ReflectionType implements \Reflector
      */
     public function isIntersection(): bool
     {
-        return !$this->isNamed() && $this->reference->name->contains('&');
+        return !$this->isNamed()
+            && $this->reference->name->includes('&');
     }
 
     /**
@@ -208,6 +211,16 @@ class ReflectionType extends \ReflectionType implements \Reflector
     }
 
     /**
+     * Check whether type is multi (eg: only `int|null`).
+     *
+     * @return bool
+     */
+    public function isMulti(): bool
+    {
+        return $this->count() > 1;
+    }
+
+    /**
      * Check whether type is builtin.
      *
      * @return bool
@@ -216,6 +229,20 @@ class ReflectionType extends \ReflectionType implements \Reflector
     {
         static $re = new RegExp(
             '^(int|float|string|bool|array|object|callable|iterable|mixed|true|false|null)(\|null)?$'
+        );
+
+        return $this->reference->name->test($re);
+    }
+
+    /**
+     * Check whether type is primitive.
+     *
+     * @return bool
+     */
+    public function isPrimitive(): bool
+    {
+        static $re = new RegExp(
+            '^(int|float|string|bool|array|null)$'
         );
 
         return $this->reference->name->test($re);
@@ -246,32 +273,35 @@ class ReflectionType extends \ReflectionType implements \Reflector
     }
 
     /**
-     * Check whether type is an existing class.
+     * Check whether type is a class name.
      *
      * @return bool
      */
     public function isClass(): bool
     {
-        return !$this->isBuiltin() && $this->isNamed();
+        return $this->isNamed() && !$this->isBuiltin();
     }
 
     /**
-     * Check whether type is a type of given class.
+     * Check whether type is a type of given class(es).
+     *
+     * @param  string ...$classes
+     * @return bool
+     */
+    public function isClassOf(string ...$classes): bool
+    {
+        return $this->isClass() && is_class_of($this->getName(), ...$classes);
+    }
+
+    /**
+     * Check whether type is a subtype of given class.
      *
      * @param  string $class
      * @return bool
      */
-    public function isClassOf(string $class): bool
+    public function isSubclassOf(string $class): bool
     {
-        return !$this->isBuiltin() && $this->isNamed() && is_class_of($this->getName(), $class);
-    }
-
-    /**
-     * @alias isBuiltin()
-     */
-    public function isPrimitive(): bool
-    {
-        return $this->isBuiltin();
+        return $this->isClass() && is_subclass_of($this->getName(), $class);
     }
 
     /**
@@ -298,9 +328,9 @@ class ReflectionType extends \ReflectionType implements \Reflector
      *
      * @return Set
      */
-    public function names(): \Set
+    public function names(): Set
     {
-        return new \Set($this->getNames());
+        return new Set($this->getNames());
     }
 
     /**
@@ -308,9 +338,9 @@ class ReflectionType extends \ReflectionType implements \Reflector
      *
      * @return Set
      */
-    public function types(): \Set
+    public function types(): Set
     {
-        return new \Set($this->getTypes());
+        return new Set($this->getTypes());
     }
 
     /**
@@ -335,6 +365,22 @@ class ReflectionType extends \ReflectionType implements \Reflector
     public function contains(string|array $name, bool $icase = false): bool
     {
         return $this->reference->names->contains($name, $icase);
+    }
+
+    /**
+     * Reflect this type if it's an existing class.
+     *
+     * @return froq\reflection\{ReflectionClass|ReflectionInterface}|null
+     */
+    public function toReflectionClass(): ReflectionClass|null
+    {
+        $name = $this->getPureName() ?? '';
+
+        return match (true) {
+            default => null,
+            class_exists($name) => new ReflectionClass($name),
+            interface_exists($name) => new ReflectionInterface($name),
+        };
     }
 
     /**

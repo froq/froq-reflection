@@ -77,11 +77,11 @@ class Reflection extends \Reflection
      * @param  string|object $target
      * @param  string|null   $type
      * @return Reflector|null
-     * @throws ArgumentError
+     * @throws ReflectionException
      */
     public static function reflect(string|object $target, string $type = null): \Reflector|null
     {
-        if (is_object($target)) {
+        if (is_object($target) && $type !== 'attribute') {
             return new ReflectionObject($target);
         }
 
@@ -150,12 +150,30 @@ class Reflection extends \Reflection
                     $target = get_class_namespace($target);
                     return new ReflectionNamespace($target);
 
+                case 'type':
+                    return new ReflectionType($target);
+                case 'attribute':
+                    $target = ($target instanceof ReflectionAttribute)
+                        ? $target->reference->attribute : $target;
+                    return new ReflectionAttribute($target);
+                // Can't do this cos of constructor arguments.
+                // case 'parameter':
+                //     return new ReflectionParameter($target);
+
                 default:
-                    throw new \ArgumentError('Invalid type: %q', $type);
+                    throw new \ReflectionException('Invalid type: ' . $type);
             }
         }
 
         return null;
+    }
+
+    /**
+     * Shortcut for creating ReflectionAttribute instances.
+     */
+    public static function reflectAttribute(...$args): ReflectionAttribute
+    {
+        return new ReflectionAttribute(...$args);
     }
 
     /**
