@@ -118,12 +118,12 @@ class ReflectionProperty extends \ReflectionProperty
     /**
      * Get attributes.
      *
-     * @param  string|null $name
-     * @param  int|null    $flags
+     * @param  string|array|null $name
+     * @param  int|null          $flags
      * @return array<froq\reflection\ReflectionAttribute>
      * @override
      */
-    public function getAttributes(string $name = null, int $flags = null): array
+    public function getAttributes(string|array $name = null, int $flags = null): array
     {
         return (new AttributeReflector($this))->getAttributes($name, $flags);
     }

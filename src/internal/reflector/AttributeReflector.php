@@ -37,10 +37,8 @@ class AttributeReflector extends Reflector
      */
     public function hasAttribute(string $name): bool
     {
-        foreach ($this->collect() as $attribute) {
-            if ($attribute->getName() === $name) {
-                return true;
-            }
+        if ($this->collect($name)) {
+            return true;
         }
         return false;
     }
@@ -53,10 +51,8 @@ class AttributeReflector extends Reflector
      */
     public function getAttribute(string $name): ReflectionAttribute|null
     {
-        foreach ($this->collect() as $attribute) {
-            if ($attribute->getName() === $name) {
-                return $this->convert($attribute);
-            }
+        if ($ret = $this->collect($name)) {
+            return $this->convert($ret[0]);
         }
         return null;
     }
@@ -64,14 +60,14 @@ class AttributeReflector extends Reflector
     /**
      * Get attributes.
      *
-     * @param  string|null $name
-     * @param  int|null    $flags
+     * @param  string|array|null $name
+     * @param  int|null          $flags
      * @return array<froq\reflection\ReflectionAttribute>
      */
-    public function getAttributes(string $name = null, int $flags = null): array
+    public function getAttributes(string|array $name = null, int $flags = null): array
     {
         return array_apply(
-            $this->collect(),
+            $this->collect($name),
             fn(\ReflectionAttribute $ref): ReflectionAttribute => $this->convert($ref)
         );
     }
@@ -92,9 +88,10 @@ class AttributeReflector extends Reflector
     /**
      * Collect attributes.
      */
-    private function collect(string $name = null, int $flags = null): array
+    private function collect(string|array $name = null, int $flags = null): array
     {
         $ref = match (true) {
+            default => null,
             $this->reflector instanceof \ReflectionClass
                 => new \ReflectionClass($this->reflector->name),
             $this->reflector instanceof \ReflectionClassConstant
@@ -105,14 +102,26 @@ class AttributeReflector extends Reflector
             $this->reflector instanceof \ReflectionFunction,
             $this->reflector instanceof ReflectionCallable
                 => $this->reflector->reference->reflection,
-            default
-                => null
         };
 
-        return $ref ? $ref->getAttributes($name, (int) $flags) : [];
+        $ret = [];
+
+        if ($ref) {
+            if (is_string($name)) {
+                $ret = $ref->getAttributes($name, (int) $flags);
+            } else {
+                $ret = $ref->getAttributes(null, (int) $flags);
+
+                if ($ret && $name) {
+                    $ret = array_filter_list($ret, fn(\ReflectionAttribute $attribute): bool => (
+                        in_array($attribute->getName(), $name, true)
+                    ));
+                }
+            }
+        }
+
+        return $ret;
     }
-
-
 
     /**
      * Convert attributes to instances.
