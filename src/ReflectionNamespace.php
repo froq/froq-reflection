@@ -5,7 +5,7 @@
  */
 namespace froq\reflection;
 
-use Map;
+use Set;
 
 /**
  * Namespace reflection class.
@@ -72,17 +72,13 @@ class ReflectionNamespace implements \Reflector
     }
 
     /**
-     * Map of classes.
+     * Set of classes.
      *
-     * @return Map<froq\reflection\ReflectionClass>
+     * @return Set<froq\reflection\ReflectionClass>
      */
-    public function classes(): Map
+    public function classes(): Set
     {
-        return Map::from($this->getClasses())->forEach(
-            fn(ReflectionClass $ref, string $key, Map $map) => (
-                $map->replaceKey($key, $ref->name, $ref)
-            )
-        );
+        return new Set($this->getClasses());
     }
 
     /**
@@ -128,17 +124,13 @@ class ReflectionNamespace implements \Reflector
     }
 
     /**
-     * Map of interfaces.
+     * Set of interfaces.
      *
-     * @return Map<froq\reflection\ReflectionInterface>
+     * @return Set<froq\reflection\ReflectionInterface>
      */
-    public function interfaces(): Map
+    public function interfaces(): Set
     {
-        return Map::from($this->getInterfaces())->forEach(
-            fn(ReflectionInterface $ref, string $key, Map $map) => (
-                $map->replaceKey($key, $ref->name, $ref)
-            )
-        );
+        return new Set($this->getInterfaces());
     }
 
     /**
@@ -184,17 +176,13 @@ class ReflectionNamespace implements \Reflector
     }
 
     /**
-     * Map of traits.
+     * Set of traits.
      *
-     * @return Map<froq\reflection\ReflectionTrait>
+     * @return Set<froq\reflection\ReflectionTrait>
      */
-    public function traits(): Map
+    public function traits(): Set
     {
-        return Map::from($this->getTraits())->forEach(
-            fn(ReflectionTrait $ref, string $key, Map $map) => (
-                $map->replaceKey($key, $ref->name, $ref)
-            )
-        );
+        return new Set($this->getTraits());
     }
 
     /**
