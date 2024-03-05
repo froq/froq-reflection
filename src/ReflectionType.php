@@ -384,6 +384,22 @@ class ReflectionType extends \ReflectionType implements \Reflector
     }
 
     /**
+     * Static initializer for ReflectionType types.
+     *
+     * @param  string|ReflectionType|null $type
+     * @return froq\reflection\ReflectionType
+     */
+    public static function from(string|\ReflectionType|null $type): ReflectionType|null
+    {
+        return $type ? new ReflectionType(
+            ($type instanceof \ReflectionNamedType)
+                ? $type->getName() : (string) $type,
+            ($type instanceof \ReflectionType)
+                && $type->allowsNull()
+        ) : null;
+    }
+
+    /**
      * Static initializer for var types.
      *
      * @param  mixed $var
@@ -392,21 +408,5 @@ class ReflectionType extends \ReflectionType implements \Reflector
     public static function of(mixed $var): ReflectionType
     {
         return new ReflectionType(get_type($var));
-    }
-
-    /**
-     * Static initializer for ReflectionType types.
-     *
-     * @param  string|ReflectionType $type
-     * @return froq\reflection\ReflectionType
-     */
-    public static function from(string|\ReflectionType $type): ReflectionType
-    {
-        return new ReflectionType(
-            ($type instanceof \ReflectionNamedType)
-                ? $type->getName() : (string) $type,
-            ($type instanceof \ReflectionType)
-                && $type->allowsNull()
-        );
     }
 }
