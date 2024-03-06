@@ -39,6 +39,7 @@ class Reflection extends \Reflection
             $reflector instanceof \ReflectionAttribute     => 'attribute',
             $reflector instanceof ReflectionCallable       => 'callable',
             $reflector instanceof \ReflectionClassConstant => 'class-constant',
+            $reflector instanceof ReflectionClosure        => 'closure',
             $reflector instanceof \ReflectionMethod        => 'method',
             $reflector instanceof \ReflectionFunction      => 'function',
             $reflector instanceof ReflectionNamespace      => 'namespace',
@@ -81,6 +82,9 @@ class Reflection extends \Reflection
      */
     public static function reflect(string|object $target, string $type = null): \Reflector|null
     {
+        if ($target instanceof \Closure) {
+            return new ReflectionClosure($target);
+        }
         if (is_object($target) && $type !== 'attribute') {
             return new ReflectionObject($target);
         }
@@ -198,6 +202,14 @@ class Reflection extends \Reflection
     public static function reflectClassConstant(...$args): ReflectionClassConstant
     {
         return new ReflectionClassConstant(...$args);
+    }
+
+    /**
+     * Shortcut for creating ReflectionClosure instances.
+     */
+    public static function reflectClosure(...$args): ReflectionClosure
+    {
+        return new ReflectionClosure(...$args);
     }
 
     /**

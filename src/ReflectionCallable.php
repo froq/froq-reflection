@@ -62,27 +62,6 @@ class ReflectionCallable implements \Reflector
     }
 
     /**
-     * Proxy for reflection object properties.
-     *
-     * @param  string $property
-     * @return string
-     * @throws ReflectionException
-     * @magic
-     */
-    public function __get(string $property): string
-    {
-        // For name, class actually.
-        if (property_exists($this->reference->reflection, $property)) {
-            return $this->reference->reflection->$property;
-        }
-
-        throw new \ReflectionException(sprintf(
-            'Undefined property %s::$%s / %s::$%s',
-            $this::class, $property, $this->reference->reflection::class, $property
-        ));
-    }
-
-    /**
      * Proxy for reflection object methods.
      *
      * @param  string $method

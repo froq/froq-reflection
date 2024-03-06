@@ -221,6 +221,16 @@ class ReflectionType extends \ReflectionType implements \Reflector
     }
 
     /**
+     * Check whether type is mixed.
+     *
+     * @return bool
+     */
+    public function isMixed(): bool
+    {
+        return $this->getName() === 'mixed';
+    }
+
+    /**
      * Check whether type is builtin.
      *
      * @return bool
@@ -352,7 +362,9 @@ class ReflectionType extends \ReflectionType implements \Reflector
      */
     public function equals(string|array $name, bool $icase = false): bool
     {
-        return $this->reference->name->equals($name, $icase);
+        $name = !$icase ? (array) $name : map((array) $name, 'lower');
+
+        return $this->reference->name->equals($name);
     }
 
     /**
@@ -364,23 +376,51 @@ class ReflectionType extends \ReflectionType implements \Reflector
      */
     public function contains(string|array $name, bool $icase = false): bool
     {
-        return $this->reference->names->contains($name, $icase);
+        $name = !$icase ? (array) $name : map((array) $name, 'lower');
+
+        return $this->reference->names->contains(...$name);
     }
 
     /**
-     * Reflect this type if it's an existing class.
+     * Reflect this type if it's an existing class or interface.
      *
      * @return froq\reflection\{ReflectionClass|ReflectionInterface}|null
      */
     public function toReflectionClass(): ReflectionClass|null
     {
-        $name = $this->getPureName() ?? '';
+        if ($this->isClass()) {
+            $name = $this->getPureName();
 
-        return match (true) {
-            default => null,
-            class_exists($name) => new ReflectionClass($name),
-            interface_exists($name) => new ReflectionInterface($name),
-        };
+            return match (true) {
+                default => null,
+                class_exists($name) => new ReflectionClass($name),
+                interface_exists($name) => new ReflectionInterface($name),
+            };
+        }
+
+        return null;
+    }
+
+    /**
+     * Reflect these types filtering existing classes or interfaces.
+     *
+     * @return array<froq\reflection\{ReflectionClass|ReflectionInterface}>
+     */
+    public function toReflectionClasses(): array
+    {
+        foreach ($this->getTypes() as $type) {
+            if ($type->isClass()) {
+                $name = $type->getName();
+
+                $ret[] = match (true) {
+                    default => null,
+                    class_exists($name) => new ReflectionClass($name),
+                    interface_exists($name) => new ReflectionInterface($name),
+                };
+            }
+        }
+
+        return filter($ret ?? []);
     }
 
     /**
@@ -391,12 +431,14 @@ class ReflectionType extends \ReflectionType implements \Reflector
      */
     public static function from(string|\ReflectionType|null $type): ReflectionType|null
     {
-        return $type ? new ReflectionType(
-            ($type instanceof \ReflectionNamedType)
-                ? $type->getName() : (string) $type,
-            ($type instanceof \ReflectionType)
-                && $type->allowsNull()
-        ) : null;
+        if ($type !== null) {
+            return new ReflectionType(
+                $type instanceof \ReflectionNamedType ? $type->getName() : (string) $type,
+                $type instanceof \ReflectionType && $type->allowsNull()
+            );
+        }
+
+        return null;
     }
 
     /**

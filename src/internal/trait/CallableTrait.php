@@ -5,8 +5,8 @@
  */
 namespace froq\reflection\internal\trait;
 
-use froq\reflection\{Reflection, ReflectionCallable, ReflectionClass, ReflectionParameter,
-    ReflectionInterface, ReflectionTrait, ReflectionAttribute, ReflectionType};
+use froq\reflection\{Reflection, ReflectionCallable, ReflectionClass, ReflectionClosure,
+    ReflectionParameter, ReflectionInterface, ReflectionTrait, ReflectionAttribute, ReflectionType};
 use froq\reflection\internal\reflector\{AttributeReflector, InterfaceReflector, TraitReflector,
     ParameterReflector};
 use Set;
@@ -24,6 +24,30 @@ use Set;
 trait CallableTrait
 {
     /**
+     * Proxy for reflection object properties.
+     *
+     * @param  string $property
+     * @return string|null
+     * @throws ReflectionException
+     * @magic
+     */
+    public function __get(string $property): string|null
+    {
+        // For name, class actually.
+        if (property_exists($this->reference->reflection, $property)) {
+            return $this->reference->reflection->$property;
+        }
+        if ($this instanceof ReflectionClosure && $property === 'class') {
+            return $this->class_;
+        }
+
+        throw new \ReflectionException(sprintf(
+            'Undefined property %s::$%s / %s::$%s',
+            $this::class, $property, $this->reference->reflection::class, $property
+        ));
+    }
+
+    /**
      * @magic
      */
     public function __debugInfo(): array
@@ -31,6 +55,9 @@ trait CallableTrait
         if ($this->reference->reflection instanceof \ReflectionMethod) {
             return ['name'  => $this->reference->reflection->name,
                     'class' => $this->reference->reflection->class];
+        }
+        if ($this instanceof ReflectionClosure) {
+            return ['name'  => $this->name, 'class' => $this->class_];
         }
 
         return ['name' => $this->reference->reflection->name];
@@ -45,6 +72,9 @@ trait CallableTrait
     {
         if ($this->reference->reflection instanceof \ReflectionMethod) {
             return $this->reference->reflection->class;
+        }
+        if ($this instanceof ReflectionClosure) {
+            return $this->class_;
         }
 
         return null;
@@ -66,6 +96,40 @@ trait CallableTrait
                 default => new ReflectionClass($ref->name),
                 $ref->isTrait() => new ReflectionTrait($ref->name),
                 $ref->isInterface() => new ReflectionInterface($ref->name),
+            };
+        }
+        if ($this instanceof ReflectionClosure && $this->class_) {
+            $ref = new \ReflectionClass($this->class_);
+
+            return match (true) {
+                default => new ReflectionClass($ref->name),
+                $ref->isTrait() => new ReflectionTrait($ref->name),
+                $ref->isInterface() => new ReflectionInterface($ref->name),
+            };
+        }
+
+        return null;
+    }
+
+    /**
+     * @override
+     */
+    public function getClosureScopeClass(): ReflectionClass|null
+    {
+        if ($this->reference->reflection instanceof \ReflectionFunctionAbstract) {
+            $ref = $this->reference->reflection->getClosureScopeClass();
+
+            return match (true) {
+                default => new ReflectionClass($ref->name),
+                $ref->isTrait() => new ReflectionTrait($ref->name),
+            };
+        }
+        if ($this instanceof ReflectionClosure && $this->class_) {
+            $ref = new \ReflectionClass($this->class_);
+
+            return match (true) {
+                default => new ReflectionClass($ref->name),
+                $ref->isTrait() => new ReflectionTrait($ref->name),
             };
         }
 
@@ -317,9 +381,44 @@ trait CallableTrait
     }
 
     /**
-     * Get parameters count.
+     * Get required parameters.
      *
-     * @return int
+     * @return array
+     */
+    public function getRequiredParameters(): array
+    {
+        foreach ($this->getParameters() as $parameter) {
+            if (!$parameter->isOptional()) {
+                $ret[] = $parameter;
+            }
+        }
+
+        return $ret ?? [];
+    }
+
+    /**
+     * Get optional parameters.
+     *
+     * @param  bool $variadics
+     * @return array
+     */
+    public function getOptionalParameters(bool $variadics = true): array
+    {
+        foreach ($this->getParameters() as $parameter) {
+            if ($parameter->isOptional()) {
+                if (!$variadics) {
+                    continue;
+                }
+
+                $ret[] = $parameter;
+            }
+        }
+
+        return $ret ?? [];
+    }
+
+    /**
+     * @alias getNumberOfParameters()
      */
     public function getParametersCount(): int
     {
@@ -327,13 +426,22 @@ trait CallableTrait
     }
 
     /**
-     * Get required parameters count.
-     *
-     * @return int
+     * @alias getNumberOfRequiredParameters()
      */
     public function getRequiredParametersCount(): int
     {
         return $this->getNumberOfRequiredParameters();
+    }
+
+    /**
+     * Get optional parameters count.
+     *
+     * @param  bool $variadics
+     * @return int
+     */
+    public function getOptionalParametersCount(bool $variadics = true): int
+    {
+        return count($this->getOptionalParameters($variadics));
     }
 
     /**

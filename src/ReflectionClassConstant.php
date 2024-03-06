@@ -242,7 +242,7 @@ class ReflectionClassConstant extends \ReflectionClassConstant
      */
     public function getTypes(): array
     {
-        return (array) $this->getType()?->getTypes();
+        return $this->getType()?->getTypes() ?? [];
     }
 
     /**

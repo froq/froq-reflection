@@ -251,10 +251,7 @@ class ReflectionProperty extends \ReflectionProperty
      */
     public function getType(): ReflectionType|null
     {
-        if ($type = parent::getType()) {
-            return ReflectionType::from($type);
-        }
-        return null;
+        return ReflectionType::from(parent::getType());
     }
 
     /**
@@ -264,7 +261,7 @@ class ReflectionProperty extends \ReflectionProperty
      */
     public function getTypes(): array
     {
-        return (array) $this->getType()?->getTypes();
+        return $this->getType()?->getTypes() ?? [];
     }
 
     /**
@@ -285,19 +282,6 @@ class ReflectionProperty extends \ReflectionProperty
     public function getModifierNames(): array
     {
         return Reflection::getModifierNames($this->getModifiers());
-    }
-
-    /**
-     * Check if property is nullable.
-     *
-     * @return bool
-     */
-    public function isNullable(): bool
-    {
-        if ($type = $this->getType()) {
-            return $type->isNullable();
-        }
-        return true;
     }
 
     /**
@@ -337,5 +321,26 @@ class ReflectionProperty extends \ReflectionProperty
         }
 
         return parent::isInitialized($object);
+    }
+
+    /**
+     * @alias allowsNull()
+     */
+    public function isNullable(): bool
+    {
+        return $this->allowsNull();
+    }
+
+    /**
+     * Check if property is nullable.
+     *
+     * @return bool
+     */
+    public function allowsNull(): bool
+    {
+        if ($type = parent::getType()) {
+            return $type->allowsNull();
+        }
+        return true;
     }
 }

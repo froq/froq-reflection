@@ -55,18 +55,18 @@ class ReflectionParameter extends \ReflectionParameter
     }
 
     /**
-     * Get class name (if its function is a method).
+     * Get class name (if its type is a class or interface).
      *
      * Note: This method is deprecated by the internal reflection API,
      * but we continue to provide it though.
      *
-     * @return string|null
+     * @return froq\reflection\ReflectionClass|null
      * @override
      */
     #[\ReturnTypeWillChange]
     public function getClass(): string|null
     {
-        return parent::getDeclaringClass()?->name;
+        return $this->getDeclaringClass()?->name;
     }
 
     /**
@@ -116,13 +116,14 @@ class ReflectionParameter extends \ReflectionParameter
      * Note: PHP Documents say, "Return Values: A ReflectionFunction object" but returns
      * ReflectionMethod if the function is a Closure and defined in a class method.
      *
-     * @return froq\reflection\{ReflectionFunction|ReflectionMethod}
+     * @return froq\reflection\{ReflectionFunction|ReflectionMethod|ReflectionClosure}
      * @override
      */
-    public function getDeclaringFunction(): ReflectionFunction|ReflectionMethod
+    public function getDeclaringFunction(): ReflectionFunction|ReflectionMethod|ReflectionClosure
     {
         if ($this->reference->callable instanceof \Closure) {
-            return new ReflectionFunction($this->reference->callable);
+            $ref = parent::getDeclaringFunction();
+            return new ReflectionClosure($this->reference->callable, $ref->class ?? null);
         }
 
         if ($ref = $this->getDeclaringMethod()) {
@@ -176,10 +177,7 @@ class ReflectionParameter extends \ReflectionParameter
      */
     public function getType(): ReflectionType|null
     {
-        if ($type = parent::getType()) {
-            return ReflectionType::from($type);
-        }
-        return null;
+        return ReflectionType::from(parent::getType());
     }
 
     /**
@@ -189,7 +187,27 @@ class ReflectionParameter extends \ReflectionParameter
      */
     public function getTypes(): array
     {
-        return (array) $this->getType()?->getTypes();
+        return $this->getType()?->getTypes() ?? [];
+    }
+
+    /**
+     * Check if this parameter type is a class.
+     *
+     * @return bool
+     */
+    public function isClass(): bool
+    {
+        return !!$this->getType()?->isClass();
+    }
+
+    /**
+     * Check if this parameter is required.
+     *
+     * @return bool
+     */
+    public function isRequired(): bool
+    {
+        return !$this->isOptional();
     }
 
     /**
