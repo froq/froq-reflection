@@ -28,7 +28,7 @@ class ReflectionNamespace implements \Reflector
      */
     public function __construct(string $name)
     {
-        if ($name !== '' && !preg_test('~^\\\?[a-zA-Z_][\w\\\]+$~', $name)) {
+        if ($name !== '' && !preg_test('~^\\\?[a-zA-Z_][\w\\\]*$~', $name)) {
             throw new \ReflectionException(sprintf('Invalid namespace: "%s"', $name));
         }
 

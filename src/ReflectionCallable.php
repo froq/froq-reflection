@@ -110,4 +110,14 @@ class ReflectionCallable implements \Reflector
     {
         return ($this->reference->reflection instanceof \ReflectionFunction);
     }
+
+    /**
+     * Check whether this is a closure reflection.
+     *
+     * @return bool
+     */
+    public function isClosure(): bool
+    {
+        return ($this->reference->callable instanceof \Closure);
+    }
 }

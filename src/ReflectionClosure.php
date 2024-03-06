@@ -30,6 +30,9 @@ class ReflectionClosure extends ReflectionFunction
     {
         parent::__construct($target);
 
-        $this->class_ = $class ?? parent::getClosureScopeClass()?->name;
+        $this->class_ = $class ?? (
+            (new \ReflectionFunction($target))
+                ->getClosureScopeClass()?->getName()
+        );
     }
 }

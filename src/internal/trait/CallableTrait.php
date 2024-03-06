@@ -5,10 +5,11 @@
  */
 namespace froq\reflection\internal\trait;
 
-use froq\reflection\{Reflection, ReflectionCallable, ReflectionClass, ReflectionClosure,
-    ReflectionParameter, ReflectionInterface, ReflectionTrait, ReflectionAttribute, ReflectionType};
+use froq\reflection\{Reflection, ReflectionCallable, ReflectionClass, ReflectionClosure, ReflectionParameter,
+    ReflectionNamespace, ReflectionInterface, ReflectionTrait, ReflectionAttribute, ReflectionType};
 use froq\reflection\internal\reflector\{AttributeReflector, InterfaceReflector, TraitReflector,
     ParameterReflector};
+use froq\util\Objects;
 use Set;
 
 /**
@@ -64,20 +65,63 @@ trait CallableTrait
     }
 
     /**
+     * Get type.
+     *
+     * @return string|null
+     */
+    public function getType(): string
+    {
+        return match (true) {
+            default => 'function',
+            $this instanceof ReflectionClosure => 'closure',
+            $this->reference->reflection instanceof \ReflectionMethod => 'method'
+        };
+    }
+
+    /**
+     * Get long name.
+     *
+     * @return string
+     */
+    public function getLongName(): string
+    {
+        return ltrim($this->getClass() .'#'. $this->getShortName(), '#');
+    }
+
+    /**
+     * Get namespace.
+     *
+     * @param  bool $baseOnly
+     * @return string
+     */
+    public function getNamespace(bool $baseOnly = false): string
+    {
+        return Objects::getNamespace($this->getClass() ?? $this->name, $baseOnly);
+    }
+
+    /**
+     * Get declaring namespace.
+     *
+     * @param  bool $baseOnly
+     * @return froq\reflection\ReflectionNamespace
+     */
+    public function getDeclaringNamespace(bool $baseOnly = false): ReflectionNamespace
+    {
+        return new ReflectionNamespace($this->getNamespace($baseOnly));
+    }
+
+    /**
      * Get class.
      *
      * @return string|null
      */
     public function getClass(): string|null
     {
-        if ($this->reference->reflection instanceof \ReflectionMethod) {
-            return $this->reference->reflection->class;
-        }
-        if ($this instanceof ReflectionClosure) {
-            return $this->class_;
-        }
-
-        return null;
+        return match (true) {
+            default => null,
+            $this instanceof ReflectionClosure => $this->class_,
+            $this->reference->reflection instanceof \ReflectionMethod => $this->reference->reflection->class
+        };
     }
 
     /**
@@ -89,9 +133,8 @@ trait CallableTrait
     #[\ReturnTypeWillChange]
     public function getDeclaringClass(): ReflectionClass|ReflectionTrait|ReflectionInterface|null
     {
-        if ($this->reference->reflection instanceof \ReflectionMethod) {
-            $ref = $this->reference->reflection->getDeclaringClass();
-
+        if ($this->reference->reflection instanceof \ReflectionMethod
+            && ($ref = $this->reference->reflection->getDeclaringClass())) {
             return match (true) {
                 default => new ReflectionClass($ref->name),
                 $ref->isTrait() => new ReflectionTrait($ref->name),
@@ -114,14 +157,14 @@ trait CallableTrait
     /**
      * @override
      */
-    public function getClosureScopeClass(): ReflectionClass|null
+    public function getClosureScopeClass(): ReflectionClass|ReflectionTrait|null
     {
-        if ($this->reference->reflection instanceof \ReflectionFunctionAbstract) {
-            $ref = $this->reference->reflection->getClosureScopeClass();
+        if ($this->reference->reflection instanceof \ReflectionFunctionAbstract
+            && ($ref = $this->reference->reflection->getClosureScopeClass())) {
 
             return match (true) {
                 default => new ReflectionClass($ref->name),
-                $ref->isTrait() => new ReflectionTrait($ref->name),
+                $ref->isTrait() => new ReflectionTrait($ref->name)
             };
         }
         if ($this instanceof ReflectionClosure && $this->class_) {
@@ -129,7 +172,32 @@ trait CallableTrait
 
             return match (true) {
                 default => new ReflectionClass($ref->name),
-                $ref->isTrait() => new ReflectionTrait($ref->name),
+                $ref->isTrait() => new ReflectionTrait($ref->name)
+            };
+        }
+
+        return null;
+    }
+
+    /**
+     * @override
+     */
+    public function getClosureCalledClass(): ReflectionClass|ReflectionTrait|null
+    {
+        if ($this->reference->reflection instanceof \ReflectionFunctionAbstract
+            && ($ref = $this->reference->reflection->getClosureCalledClass())) {
+
+            return match (true) {
+                default => new ReflectionClass($ref->name),
+                $ref->isTrait() => new ReflectionTrait($ref->name)
+            };
+        }
+        if ($this instanceof ReflectionClosure && $this->class_) {
+            $ref = new \ReflectionClass($this->class_);
+
+            return match (true) {
+                default => new ReflectionClass($ref->name),
+                $ref->isTrait() => new ReflectionTrait($ref->name)
             };
         }
 
@@ -447,9 +515,9 @@ trait CallableTrait
     /**
      * Get visibility.
      *
-     * @return string
+     * @return string|null
      */
-    public function getVisibility(): string
+    public function getVisibility(): string|null
     {
         return Reflection::getVisibility($this->reference->reflection);
     }
@@ -469,10 +537,7 @@ trait CallableTrait
      */
     public function getReturnType(): ReflectionType|null
     {
-        if ($type = $this->reference->reflection->getReturnType()) {
-            return ReflectionType::from($type);
-        }
-        return null;
+        return ReflectionType::from($this->reference->reflection->getReturnType());
     }
 
     /**
@@ -482,6 +547,6 @@ trait CallableTrait
      */
     public function getReturnTypes(): array
     {
-        return (array) $this->getReturnType()?->getTypes();
+        return $this->getReturnType()?->getTypes() ?? [];
     }
 }

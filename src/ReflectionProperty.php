@@ -57,6 +57,38 @@ class ReflectionProperty extends \ReflectionProperty
     }
 
     /**
+     * Get long name.
+     *
+     * @return string
+     */
+    public function getLongName(): string
+    {
+        return $this->class .'$'. $this->name;
+    }
+
+    /**
+     * Get namespace.
+     *
+     * @param  bool $baseOnly
+     * @return string
+     */
+    public function getNamespace(bool $baseOnly = false): string
+    {
+        return $this->getDeclaringClass()->getNamespace($baseOnly);
+    }
+
+    /**
+     * Get declaring namespace.
+     *
+     * @param  bool $baseOnly
+     * @return froq\reflection\ReflectionNamespace
+     */
+    public function getDeclaringNamespace(bool $baseOnly = false): ReflectionNamespace
+    {
+        return $this->getDeclaringClass()->getDeclaringNamespace($baseOnly);
+    }
+
+    /**
      * Get class.
      *
      * @return string

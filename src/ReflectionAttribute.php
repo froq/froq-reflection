@@ -110,11 +110,12 @@ class ReflectionAttribute implements \Reflector
     /**
      * Get declaring namespace.
      *
+     * @param  bool $baseOnly
      * @return froq\reflection\ReflectionNamespace
      */
-    public function getDeclaringNamespace(): ReflectionNamespace
+    public function getDeclaringNamespace(bool $baseOnly = false): ReflectionNamespace
     {
-        return new ReflectionNamespace($this->getNamespace());
+        return new ReflectionNamespace($this->getNamespace($baseOnly));
     }
 
     /**

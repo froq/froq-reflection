@@ -96,13 +96,19 @@ class Reflection extends \Reflection
             if (class_exists($target)) {
                 return new ReflectionClass($target);
             }
+            if (trait_exists($target)) {
+                return new ReflectionTrait($target);
+            }
+            if (interface_exists($target)) {
+                return new ReflectionInterface($target);
+            }
             if (function_exists($target)) {
                 return new ReflectionFunction($target);
             }
 
             // Eg: Foo@bar or Foo::bar
-            if (str_has($target, ['@', '::'])) {
-                [$class, $member] = str_pop($target, ['@', '::'], 2);
+            if (str_has($target, ['::', '#', '$', '@'])) {
+                [$class, $member] = str_pop($target, ['::', '#', '$', '@'], 2);
 
                 if (isset($class, $member)) {
                     // Match by check.
