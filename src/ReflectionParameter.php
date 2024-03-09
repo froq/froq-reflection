@@ -136,6 +136,28 @@ class ReflectionParameter extends \ReflectionParameter
     }
 
     /**
+     * Has value.
+     *
+     * @return bool
+     * @missing
+     */
+    public function hasValue(): bool
+    {
+        return $this->getDefaultValue($nil = Nil()) !== $nil;
+    }
+
+    /**
+     * Get value.
+     *
+     * @return mixed
+     * @missing
+     */
+    public function getValue(): mixed
+    {
+        return $this->getDefaultValue();
+    }
+
+    /**
      * Check default value existence.
      *
      * @return bool
