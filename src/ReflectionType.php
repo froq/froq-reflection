@@ -273,6 +273,20 @@ class ReflectionType extends \ReflectionType implements \Reflector
     }
 
     /**
+     * Check whether type is scalar.
+     *
+     * @return bool
+     */
+    public function isScalar(): bool
+    {
+        static $re = new RegExp(
+            '^(int|float|string|bool)$'
+        );
+
+        return $this->reference->name->test($re);
+    }
+
+    /**
      * Check whether type is nullable.
      *
      * @return bool
