@@ -549,4 +549,22 @@ trait CallableTrait
     {
         return $this->getReturnType()?->getTypes() ?? [];
     }
+
+    /**
+     * Get directory name.
+     *
+     * @return string
+     */
+    public function getDirectoryName(): string
+    {
+        return dirname($this->getFileName());
+    }
+
+    /**
+     * @alias getDirectoryName()
+     */
+    public function getDirName(): string
+    {
+        return $this->getDirectoryName();
+    }
 }

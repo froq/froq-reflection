@@ -44,9 +44,7 @@ trait ClassTrait
     }
 
     /**
-     * Check whether this is a clonable class (for typos).
-     *
-     * @return bool
+     * @alias isCloneable()
      */
     public function isClonable(): bool
     {
@@ -669,5 +667,23 @@ trait ClassTrait
         }
 
         return in_array($name, $this->getParentNames(), true);
+    }
+
+    /**
+     * Get directory name.
+     *
+     * @return string
+     */
+    public function getDirectoryName(): string
+    {
+        return dirname($this->getFileName());
+    }
+
+    /**
+     * @alias getDirectoryName()
+     */
+    public function getDirName(): string
+    {
+        return $this->getDirectoryName();
     }
 }
