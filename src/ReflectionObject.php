@@ -33,22 +33,4 @@ class ReflectionObject extends \ReflectionObject
             target : $target
         );
     }
-
-    /**
-     * Init a class with/without constructor.
-     *
-     * @param  mixed ...$arguments
-     * @return object
-     */
-    public function init(mixed ...$arguments): object
-    {
-        $this->isClass() || throw new \ReflectionException(sprintf(
-            'Cannot initialize %s %s', $this->getType(), $this->getName()
-        ));
-
-        $ref = new \ReflectionObject($this->reference->target);
-
-        return ($arguments && $ref->hasMethod('__construct'))
-             ? $ref->newInstance(...$arguments) : $ref->newInstanceWithoutConstructor();
-    }
 }

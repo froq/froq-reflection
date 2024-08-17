@@ -686,4 +686,26 @@ trait ClassTrait
     {
         return $this->getDirectoryName();
     }
+
+    /**
+     * Init a class with/without constructor.
+     *
+     * @param  mixed ...$arguments
+     * @return object
+     */
+    public function init(mixed ...$arguments): object
+    {
+        $this->isClass() || throw new \ReflectionException(sprintf(
+            'Cannot initialize %s %s', $this->getType(), $this->getName()
+        ));
+
+        $ref = ($this instanceof \ReflectionClass)
+            ? new \ReflectionClass($this->reference->target)
+            : new \ReflectionObject($this->reference->target);
+
+        if ($arguments && $ref->hasMethod('__construct')) {
+            return $ref->newInstance(...$arguments);
+        }
+        return $ref->newInstanceWithoutConstructor();
+    }
 }
