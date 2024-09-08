@@ -144,7 +144,7 @@ class PropertyReflector extends Reflector
             $ret[$property->name] = $property->name;
         }
 
-        // If no public vanted, skip dynamics.
+        // If no public wanted, skip dynamics.
         if ($filter && !($filter & \ReflectionProperty::IS_PUBLIC)) {
             return array_list($ret);
         }
