@@ -704,7 +704,7 @@ trait ClassTrait
             : new \ReflectionObject($this->reference->target);
 
         if ($arguments && $ref->hasMethod('__construct')) {
-            return $ref->newInstance(...$arguments);
+            return $ref->newInstanceArgs($arguments);
         }
         return $ref->newInstanceWithoutConstructor();
     }
