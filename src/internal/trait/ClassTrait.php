@@ -703,6 +703,7 @@ trait ClassTrait
             ? new \ReflectionClass($this->reference->target)
             : new \ReflectionObject($this->reference->target);
 
+        // Constructor may require arguments and this causes error if no arguments given.
         if ($arguments && $ref->hasMethod('__construct')) {
             return $ref->newInstanceArgs($arguments);
         }
