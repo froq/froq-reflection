@@ -338,6 +338,17 @@ class ReflectionProperty extends \ReflectionProperty
     }
 
     /**
+     * Check if property is declared within a class.
+     *
+     * @alias  isDefault()
+     * @return bool
+     */
+    public function isDeclared(): bool
+    {
+        return parent::isDefault();
+    }
+
+    /**
      * @override
      */
     public function isInitialized(object $object = null): bool
