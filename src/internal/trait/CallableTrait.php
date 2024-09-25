@@ -551,19 +551,19 @@ trait CallableTrait
     }
 
     /**
-     * Get directory name.
+     * Get directory name (mate of getFileName()).
      *
-     * @return string
+     * @return string|false
      */
-    public function getDirectoryName(): string
+    public function getDirectoryName(): string|false
     {
-        return dirname($this->getFileName());
+        return ($file = $this->getFileName()) ? dirname($file) : false;
     }
 
     /**
      * @alias getDirectoryName()
      */
-    public function getDirName(): string
+    public function getDirName(): string|false
     {
         return $this->getDirectoryName();
     }
